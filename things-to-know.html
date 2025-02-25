@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isles Server - Things To Know</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="content">
+    <h1>Things To Know</h1>
+    <p>Find useful information and guides below:</p>
+  </header>
+
+  <div class="accordion">
+    <!-- Accordion Item 1 -->
+    <div class="accordion-item">
+      <div class="accordion-header">Connecting to the Server</div>
+      <div class="accordion-content">
+        <p>Follow these steps to connect to our server:</p>
+        <ol>
+          <li>Download and install the FiveM client.</li>
+          <li>Launch FiveM and add our server via our connection details.</li>
+          <li>Join our Discord for updates and additional support.</li>
+        </ol>
+        <img src="assets/images/connection-guide.png" alt="Connection Guide">
+      </div>
+    </div>
+    
+    <!-- Accordion Item 2 -->
+    <div class="accordion-item">
+      <div class="accordion-header">Rules &amp; Regulations</div>
+      <div class="accordion-content">
+        <p>Please read and follow our rules to ensure a friendly and fun community:</p>
+        <ul>
+          <li>No cheating or exploiting game mechanics.</li>
+          <li>Respect all players and staff.</li>
+          <li>Follow our community guidelines at all times.</li>
+        </ul>
+        <img src="assets/images/rules.png" alt="Server Rules">
+      </div>
+    </div>
+    
+    <!-- Accordion Item 3 -->
+    <div class="accordion-item">
+      <div class="accordion-header">Event Schedules</div>
+      <div class="accordion-content">
+        <p>Stay updated on our upcoming events! Check our events calendar and join our community events.</p>
+        <img src="assets/images/events-calendar.png" alt="Events Calendar">
+      </div>
+    </div>
+    
+    <!-- Add additional accordion items as needed -->
+  </div>
+
+  <script>
+    // Accordion toggle functionality
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+    
+    accordionHeaders.forEach(header => {
+      header.addEventListener('click', () => {
+        header.parentElement.classList.toggle('active');
+      });
+    });
+  </script>
+</body>
+</html>
