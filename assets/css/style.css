@@ -99,3 +99,100 @@ body, html {
   vertical-align: middle;
   margin-left: 10px;
 }
+
+/* --------------------- Things To Know Page Styles --------------------- */
+
+/* Global background for Things To Know page */
+body {
+  background: #121212;  /* Dark, professional background */
+  color: #e0e0e0;
+}
+
+/* Fixed Home Button Styling */
+.home-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  padding: 10px 15px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1em;
+  z-index: 10;
+  transition: background-color 0.3s;
+}
+
+.home-btn:hover {
+  background-color: #3a3a3a;
+}
+
+/* Header Content Styling for Things To Know page */
+header.content {
+  width: 80%;
+  max-width: 800px;
+  margin: 100px auto 40px;  /* Centered with extra top margin */
+  padding: 20px;
+  text-align: center;
+}
+
+/* Accordion Styles */
+.accordion {
+  width: 80%;
+  max-width: 800px;
+  margin: 40px auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  background-color: #1e1e1e;
+}
+
+.accordion-item {
+  border-bottom: 1px solid #333;
+}
+
+.accordion-header {
+  background-color: #2a2a2a;
+  cursor: pointer;
+  padding: 15px;
+  font-size: 1.1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+  color: #e0e0e0;
+}
+
+.accordion-header:hover {
+  background-color: #3a3a3a;
+}
+
+.accordion-header::after {
+  content: '\002B'; /* Plus sign */
+  font-size: 1.5em;
+  transition: transform 0.2s ease;
+}
+
+.accordion-item.active .accordion-header::after {
+  transform: rotate(45deg);
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  padding: 0 15px;
+  background-color: #252525;
+  color: #e0e0e0;
+}
+
+.accordion-item.active .accordion-content {
+  max-height: 500px;  /* Adjust as necessary */
+  padding: 15px;
+}
+
+.accordion-content img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+}
