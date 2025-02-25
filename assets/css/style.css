@@ -1,3 +1,5 @@
+/* --------------------- Global & Existing Styles --------------------- */
+
 /* Reset default margins and base styles */
 body, html {
   margin: 0;
@@ -94,7 +96,6 @@ body, html {
   background-color: rgba(0, 0, 0, 0.9);
 }
 
-/* Volume controller styling */
 .music-controls input[type="range"] {
   vertical-align: middle;
   margin-left: 10px;
@@ -102,9 +103,9 @@ body, html {
 
 /* --------------------- Things To Know Page Styles --------------------- */
 
-/* Global background for Things To Know page */
+/* Global background for pages like Things To Know */
 body {
-  background: #121212;  /* Dark, professional background */
+  background: #121212;
   color: #e0e0e0;
 }
 
@@ -127,16 +128,21 @@ body {
   background-color: #3a3a3a;
 }
 
-/* Header Content Styling for Things To Know page */
+/* Header Content Styling */
 header.content {
   width: 80%;
   max-width: 800px;
-  margin: 100px auto 40px;  /* Centered with extra top margin */
+  margin: 120px auto 40px;
   padding: 20px;
   text-align: center;
 }
 
-/* Accordion Styles */
+header.content .subtitle {
+  font-size: 1.1em;
+  color: #ccc;
+}
+
+/* Accordion Styles (for Things To Know page) */
 .accordion {
   width: 80%;
   max-width: 800px;
@@ -168,7 +174,7 @@ header.content {
 }
 
 .accordion-header::after {
-  content: '\002B'; /* Plus sign */
+  content: '\002B';
   font-size: 1.5em;
   transition: transform 0.2s ease;
 }
@@ -187,7 +193,7 @@ header.content {
 }
 
 .accordion-item.active .accordion-content {
-  max-height: 500px;  /* Adjust as necessary */
+  max-height: 500px;
   padding: 15px;
 }
 
@@ -203,5 +209,75 @@ header.content {
 body.connection-page {
   background: linear-gradient(135deg, #232526, #414345);
   color: #e0e0e0;
-  overflow-y: auto; /* Allow vertical scrolling if needed */
+  overflow-y: auto;
+}
+
+/* Connection Buttons Container */
+.connection-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin: 30px auto;
+  width: 90%;
+  max-width: 600px;
+}
+
+/* Connection Button Styling */
+.connection-btn {
+  background-color: #007BFF;
+  padding: 15px 30px;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  color: #fff;
+  width: 100%;
+  text-align: center;
+}
+
+.connection-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Donation Info Styling */
+.donation-info {
+  text-align: center;
+}
+
+.donation-info p {
+  margin: 5px 0;
+}
+
+.donation-info .small {
+  font-size: 0.9em;
+  color: #ccc;
+}
+
+/* Connection Instructions Container */
+.connection-instructions {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  padding: 30px;
+  margin: 40px auto;
+  width: 90%;
+  max-width: 800px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.connection-instructions h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.connection-instructions ol {
+  line-height: 1.6;
+}
+
+.connection-instructions code {
+  background: #333;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-family: monospace;
 }
