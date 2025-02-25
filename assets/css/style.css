@@ -1,4 +1,4 @@
-/* Global Background and Text Color */
+/* Global Styles (Example for a dark, professional look) */
 body {
   background: #121212;  /* A very dark, professional background */
   color: #e0e0e0;       /* Light text for contrast */
@@ -7,34 +7,42 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Header Styling for the Things To Know page */
-header.content {
-  width: 80%;
-  max-width: 800px;
-  margin: 40px auto;  /* centers the header horizontally */
-  padding: 20px;
-  text-align: center;
+/* Fixed Home Button Styling */
+.home-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background-color: #2a2a2a;  /* Slightly lighter than the body */
+  color: #e0e0e0;           /* Light text for contrast */
+  padding: 10px 15px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1em;
+  z-index: 10;
+  transition: background-color 0.3s ease;
 }
 
-/* Accordion Container */
+.home-btn:hover {
+  background-color: #3a3a3a;  /* Slightly lighter on hover */
+}
+
+/* Accordion Styles */
 .accordion {
   width: 80%;
   max-width: 800px;
-  margin: 40px auto;
+  margin: 40px auto;  /* Centers the accordion horizontally */
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   background-color: #1e1e1e;  /* Slightly lighter than the body */
 }
 
-/* Accordion Item */
 .accordion-item {
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #333;  /* Dark border for separation */
 }
 
-/* Accordion Header */
 .accordion-header {
-  background-color: #2a2a2a;
+  background-color: #2a2a2a;  /* Slightly lighter than the body */
   cursor: pointer;
   padding: 15px;
   font-size: 1.1em;
@@ -42,11 +50,11 @@ header.content {
   justify-content: space-between;
   align-items: center;
   transition: background-color 0.2s ease;
-  color: #e0e0e0;
+  color: #e0e0e0;           /* Light text for contrast */
 }
 
 .accordion-header:hover {
-  background-color: #3a3a3a;
+  background-color: #3a3a3a;  /* Slightly lighter on hover */
 }
 
 .accordion-header::after {
@@ -59,12 +67,13 @@ header.content {
   transform: rotate(45deg);
 }
 
-/* Accordion Content: start collapsed */
 .accordion-content {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
   padding: 0 15px; /* Optional: add horizontal padding */
+  background-color: #252525;  /* Slightly lighter than the accordion */
+  color: #e0e0e0;           /* Light text for contrast */
 }
 
 /* When active, allow enough max-height to display content */
@@ -77,4 +86,13 @@ header.content {
   max-width: 100%;
   height: auto;
   margin-top: 10px;
+}
+
+/* Header Content Styling */
+header.content {
+  width: 80%;
+  max-width: 800px;
+  margin: 100px auto 40px; /* Centers the header horizontally with some top margin to clear the fixed button */
+  padding: 20px;
+  text-align: center;
 }
