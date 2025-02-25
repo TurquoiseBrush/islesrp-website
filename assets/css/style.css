@@ -281,3 +281,9 @@ body.connection-page {
   border-radius: 3px;
   font-family: monospace;
 }
+/* Hover effect for buttons */
+.btn.hovered {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
