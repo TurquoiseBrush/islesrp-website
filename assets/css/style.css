@@ -196,3 +196,12 @@ header.content {
   height: auto;
   margin-top: 10px;
 }
+
+/* --------------------- Connection Page Specific Styles --------------------- */
+
+/* Use a distinct background for the Connection page */
+body.connection-page {
+  background: linear-gradient(135deg, #232526, #414345);
+  color: #e0e0e0;
+  overflow-y: auto; /* Allow vertical scrolling if needed */
+}
