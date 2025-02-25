@@ -345,3 +345,59 @@ body.feedback-page {
 .submit-btn:hover {
   background-color: #0056b3;
 }
+/* --------------------- Server Description Page Styles --------------------- */
+
+/* Apply a subtle gradient background to the description page */
+body.server-description-page {
+  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+  color: #e0e0e0;
+  overflow-y: auto;
+}
+
+/* Adjust header content for the description page */
+header.content {
+  width: 80%;
+  max-width: 800px;
+  margin: 120px auto 40px;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Description Section Container */
+.description {
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto 60px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Text inside description */
+.description-text {
+  padding: 20px;
+  line-height: 1.6;
+}
+
+/* Gallery Styling */
+.description-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 20px;
+  justify-content: center;
+}
+
+.description-gallery img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.description-gallery img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
