@@ -43,10 +43,13 @@ body, html {
 }
 
 /* Logo styling */
-.logo {
-  max-width: 300px;
-  margin-bottom: 20px;
+.server-logo {
+  max-width: 200px; /* Adjust as needed */
+  height: auto; /* Maintains aspect ratio */
+  display: block;
+  margin: 0 auto; /* Centers the image */
 }
+
 
 /* Navigation container styling */
 .navigation {

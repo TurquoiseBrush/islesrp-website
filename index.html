@@ -7,10 +7,11 @@
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+  
   <!-- Background Video -->
-  <div class="video-background-container">
+  <div class="video-container">
     <iframe 
-      src="https://www.youtube.com/embed/f1MAEDPcUC0?si=RRKQzmI6jvj1Y2KT&autoplay=1&mute=1&controls=0&loop=1&playlist=f1MAEDPcUC0&modestbranding=1&showinfo=0&rel=0&vq=hd2160"
+      src="https://www.youtube.com/embed/f1MAEDPcUC0?autoplay=1&mute=1&controls=0&loop=1&playlist=f1MAEDPcUC0&modestbranding=1&showinfo=0&rel=0&vq=hd2160"
       frameborder="0"
       allow="autoplay; fullscreen"
       allowfullscreen
@@ -20,92 +21,83 @@
   
   <!-- Main Content -->
   <div class="content">
-    <img src="assets/images/isles.png" alt="Isles Server Logo" class="logo">
-    <div class="navigation">
+    <img src="assets/images/isles.png" alt="Isles Server Logo" class="server-logo">
+    
+    <nav class="navigation">
       <a href="server-description.html" class="btn">Server Description</a>
       <a href="social-media.html" class="btn">Social Media</a>
       <a href="connection.html" class="btn">Connect to Server</a>
       <a href="things-to-know.html" class="btn">Things to Know</a>
       <a href="feedback.html" class="btn">Feedback</a>
-    </div>
+    </nav>
   </div>
   
-  <!-- Hidden audio element for background music -->
+  <!-- Background Music -->
   <audio id="backgroundMusic" preload="auto"></audio>
   
   <!-- Music Controls -->
   <div class="music-controls">
-    <button id="backButton">Back</button>
-    <button id="playPauseButton">Pause</button>
-    <button id="skipButton">Skip</button>
-    <button id="muteButton">Mute</button>
-    <!-- Volume controller starts at 0.3 -->
-    <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.3">
+    <button id="prevTrack">⏮️</button>
+    <button id="playPause">⏯️</button>
+    <button id="nextTrack">⏭️</button>
+    <button id="muteToggle">🔇</button>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.3">
   </div>
   
-  <!-- Music Player Script -->
   <script>
-    // List of music files in your assets folder
-    const playlist = [
-      "assets/music/song1.mp3"
-    ];
+    document.addEventListener("DOMContentLoaded", () => {
+      const playlist = ["assets/music/song1.mp3"];
+      let currentTrack = Math.floor(Math.random() * playlist.length);
+      const audio = document.getElementById("backgroundMusic");
+      const volumeSlider = document.getElementById("volumeSlider");
 
-    // Choose a random starting song
-    let currentSongIndex = Math.floor(Math.random() * playlist.length);
-    const audio = document.getElementById("backgroundMusic");
-    const volumeControl = document.getElementById("volumeControl");
-
-    // Start with a quieter volume
-    audio.volume = 0.3;
-
-    // Function to load and play a song based on its index
-    function loadSong(index) {
-      audio.src = playlist[index];
+      // Initialize audio
+      audio.src = playlist[currentTrack];
+      audio.volume = 0.3;
       audio.play();
-    }
 
-    // Start playing the randomly selected song
-    loadSong(currentSongIndex);
-
-    // When the current song ends, move to the next one
-    audio.addEventListener("ended", function() {
-      currentSongIndex = (currentSongIndex + 1) % playlist.length;
-      loadSong(currentSongIndex);
-    });
-
-    // Back button: play previous song
-    document.getElementById("backButton").addEventListener("click", function() {
-      currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
-      loadSong(currentSongIndex);
-    });
-
-    // Skip button: play next song
-    document.getElementById("skipButton").addEventListener("click", function() {
-      currentSongIndex = (currentSongIndex + 1) % playlist.length;
-      loadSong(currentSongIndex);
-    });
-
-    // Play/Pause toggle
-    document.getElementById("playPauseButton").addEventListener("click", function() {
-      if (audio.paused) {
+      // Load & Play Song
+      function loadTrack(index) {
+        audio.src = playlist[index];
         audio.play();
-        this.innerText = "Pause";
-      } else {
-        audio.pause();
-        this.innerText = "Play";
       }
-    });
 
-    // Mute toggle
-    document.getElementById("muteButton").addEventListener("click", function() {
-      audio.muted = !audio.muted;
-      this.innerText = audio.muted ? "Unmute" : "Mute";
-    });
+      // Track end - Play next
+      audio.addEventListener("ended", () => {
+        currentTrack = (currentTrack + 1) % playlist.length;
+        loadTrack(currentTrack);
+      });
 
-    // Volume control: update audio volume
-    volumeControl.addEventListener("input", function() {
-      audio.volume = this.value;
+      // Event delegation for buttons
+      document.querySelector(".music-controls").addEventListener("click", (event) => {
+        const { id } = event.target;
+
+        if (id === "prevTrack") {
+          currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+          loadTrack(currentTrack);
+        } else if (id === "nextTrack") {
+          currentTrack = (currentTrack + 1) % playlist.length;
+          loadTrack(currentTrack);
+        } else if (id === "playPause") {
+          if (audio.paused) {
+            audio.play();
+            event.target.innerText = "⏸️";
+          } else {
+            audio.pause();
+            event.target.innerText = "▶️";
+          }
+        } else if (id === "muteToggle") {
+          audio.muted = !audio.muted;
+          event.target.innerText = audio.muted ? "🔊" : "🔇";
+        }
+      });
+
+      // Volume Control
+      volumeSlider.addEventListener("input", (event) => {
+        audio.volume = event.target.value;
+      });
     });
   </script>
+
 </body>
 </html>
