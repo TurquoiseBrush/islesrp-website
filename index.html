@@ -45,26 +45,29 @@
   </div>
   
   <script>
-    // List of music files in your assets folder
-    const playlist = [
-      "assets/music/song1.mp3"
-    ];
-
-    // Choose a random starting song
-    let currentSongIndex = Math.floor(Math.random() * playlist.length);
-    const audio = document.getElementById("backgroundMusic");
-    const volumeControl = document.getElementById("volumeControl");
-
-      // Initialize audio
-      audio.src = playlist[currentTrack];
-      audio.volume = 0.3;
-      audio.play();
+    document.addEventListener("DOMContentLoaded", () => {
+      const playlist = [
+        "assets/music/song1.mp3",
+        "assets/music/song2.mp3",
+        "assets/music/song3.mp3"
+      ];
+      let currentTrack = Math.floor(Math.random() * playlist.length);
+      const audio = document.getElementById("backgroundMusic");
+      const playPauseBtn = document.getElementById("playPause");
+      const muteToggle = document.getElementById("muteToggle");
+      const volumeSlider = document.getElementById("volumeSlider");
 
       // Load & Play Song
       function loadTrack(index) {
         audio.src = playlist[index];
-        audio.play();
+        audio.play().then(() => {
+          playPauseBtn.innerText = "⏸️";
+        }).catch(err => console.log("Autoplay prevented:", err));
       }
+
+      // Initialize audio
+      loadTrack(currentTrack);
+      audio.volume = 0.3;
 
       // Track end - Play next
       audio.addEventListener("ended", () => {
@@ -72,7 +75,7 @@
         loadTrack(currentTrack);
       });
 
-      // Event delegation for buttons
+      // Button Actions
       document.querySelector(".music-controls").addEventListener("click", (event) => {
         const { id } = event.target;
 
@@ -85,14 +88,14 @@
         } else if (id === "playPause") {
           if (audio.paused) {
             audio.play();
-            event.target.innerText = "⏸️";
+            playPauseBtn.innerText = "⏸️";
           } else {
             audio.pause();
-            event.target.innerText = "▶️";
+            playPauseBtn.innerText = "▶️";
           }
         } else if (id === "muteToggle") {
           audio.muted = !audio.muted;
-          event.target.innerText = audio.muted ? "🔊" : "🔇";
+          muteToggle.innerText = audio.muted ? "🔊" : "🔇";
         }
       });
 
