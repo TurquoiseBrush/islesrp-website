@@ -45,11 +45,15 @@
   </div>
   
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const playlist = ["assets/music/song1.mp3"];
-      let currentTrack = Math.floor(Math.random() * playlist.length);
-      const audio = document.getElementById("backgroundMusic");
-      const volumeSlider = document.getElementById("volumeSlider");
+    // List of music files in your assets folder
+    const playlist = [
+      "assets/music/song1.mp3"
+    ];
+
+    // Choose a random starting song
+    let currentSongIndex = Math.floor(Math.random() * playlist.length);
+    const audio = document.getElementById("backgroundMusic");
+    const volumeControl = document.getElementById("volumeControl");
 
       // Initialize audio
       audio.src = playlist[currentTrack];
