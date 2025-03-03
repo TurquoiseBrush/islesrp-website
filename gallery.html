@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery - IslesRP</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="gallery-page">
+  <!-- Fixed Home Button -->
+  <a href="index.html" class="home-btn">Home</a>
+
+  <header class="content">
+    <h1>Server Gallery</h1>
+    <p>Check out amazing moments from IslesRP!</p>
+  </header>
+
+  <!-- Image Grid Container -->
+  <section class="gallery-grid">
+    <div class="gallery-item" onclick="openModal('server1.jpg', 'Cityscape of Isles Server', 'A stunning view of the IslesRP city at sunset.')">
+      <img src="assets/images/gallery/" alt="Cityscape of Isles Server">
+    </div>
+
+    <div class="gallery-item" onclick="openModal('pd.png', 'Custom Police Vehicles', 'IslesRP police force using custom lore-friendly vehicles.')">
+      <img src="assets/images/gallery/" alt="Custom Police Vehicles">
+    </div>
+
+    <div class="gallery-item" onclick="openModal('event.png', 'Community Event', 'Players gathering for a special server-wide event!')">
+      <img src="assets/images/gallery/" alt="Community Event">
+    </div>
+
+    <!-- Add more images as needed -->
+  </section>
+
+  <!-- Modal for Enlarged Image -->
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <img id="modalImage" src="" alt="">
+      <h3 id="modalTitle"></h3>
+      <p id="modalDescription"></p>
+    </div>
+  </div>
+
+  <script src="assets/js/gallery.js"></script>
+</body>
+</html>
