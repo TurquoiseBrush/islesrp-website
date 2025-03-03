@@ -6,7 +6,7 @@
   <title>IslesRP - Things To Know</title>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body class="things-to-know-page">
   <!-- Fixed Home Button at Top Left -->
   <a href="index.html" class="home-btn">Home</a>
 
@@ -22,16 +22,16 @@
       <div class="accordion-content">
         <p>The server uses Pure Mode, follow these steps to enable it:</p>
         <ol>
-          <li>Right click your FiveM app</li>
-          <li>Go to properties</li>
-          <li>On the target line, add -pure_1 after the .exe</li>
-          <li>Click apply</li>
+          <li>Right-click your FiveM app.</li>
+          <li>Go to Properties.</li>
+          <li>On the target line, add <code>-pure_1</code> after the <code>.exe</code>.</li>
+          <li>Click Apply.</li>
         </ol>
         <img src="assets/images/pure-mode.png" alt="Pure Mode">
       </div>
     </div>
-    
-<!-- Accordion Item 2: Clearing FiveM Cache -->
+
+    <!-- Accordion Item 2: Clearing FiveM Cache -->
     <div class="accordion-item">
       <div class="accordion-header">Clearing FiveM Cache</div>
       <div class="accordion-content">
@@ -44,22 +44,47 @@
           <li>Hold <kbd>Ctrl</kbd> and click the folders: <em>Cache</em>, <em>Server-Cache</em>, and <em>Server-Cache-Priv</em>.</li>
           <li>Right-click the selected folders and choose <strong>Delete</strong>, or press the <kbd>Del</kbd> key.</li>
         </ol>
-        <img src="assets/images/cache-clear.png" alt="Clearing FiveM Cache">
+        
+        <!-- YouTube Video Embed -->
+        <div class="video-container">
+          <iframe 
+            width="560" 
+            height="315" 
+            src="https://www.youtube.com/embed/9Jq16iEzyOI?si=3OqXWBl2gHC9Mjaf" 
+            title="How to Clear FiveM Cache" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerpolicy="strict-origin-when-cross-origin" 
+            allowfullscreen>
+          </iframe>
+        </div>
       </div>
     </div>
-    
+
     <!-- Add additional accordion items as needed -->
   </div>
 
   <script>
-    // Accordion toggle functionality
-    const accordionHeaders = document.querySelectorAll('.accordion-header');
-    
-    accordionHeaders.forEach(header => {
+    document.querySelectorAll('.accordion-header').forEach(header => {
       header.addEventListener('click', () => {
-        header.parentElement.classList.toggle('active');
+        const item = header.parentElement;
+        item.classList.toggle('active');
+  
+        // Allow page height to update dynamically when opening an accordion
+        if (item.classList.contains('active')) {
+          item.querySelector('.accordion-content').style.maxHeight = item.querySelector('.accordion-content').scrollHeight + "px";
+        } else {
+          item.querySelector('.accordion-content').style.maxHeight = "0px";
+        }
+  
+        // Ensure the page scrolls past opened content
+        setTimeout(() => {
+          document.documentElement.style.height = "auto";
+          document.body.style.height = "auto";
+        }, 300);
       });
     });
   </script>
+  
 </body>
 </html>
