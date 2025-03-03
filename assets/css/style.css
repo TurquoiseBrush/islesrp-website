@@ -522,3 +522,10 @@ header.content {
 .instagram-btn:hover {
   background-color: #a31e68;
 }
+/* Completely disable scrolling on index.html */
+body.index-page, html.index-page {
+  overflow: hidden !important; /* Fully disables scrolling */
+  height: 100vh;
+  width: 100vw;
+  position: fixed; /* Prevents accidental movement */
+}
