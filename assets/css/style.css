@@ -393,7 +393,7 @@ header.content {
 }
 
 .description-gallery img {
-  max-width: 40%; /* Adjust image size */
+  max-width: 30%; /* Adjust image size to make it smaller */
   height: auto;
   border-radius: 5px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
@@ -542,10 +542,10 @@ body.gallery-page {
 /* Gallery Grid Layout */
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 15px;
-  padding: 20px;
-  max-width: 1200px;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); /* Increased minimum width for even larger images */
+  gap: 45px; /* Increased gap for better spacing */
+  padding: 45px; /* Increased padding for better spacing */
+  max-width: 1500px; /* Increased max-width for even larger images */
   margin: auto;
 }
 
@@ -560,14 +560,15 @@ body.gallery-page {
 
 .gallery-item img {
   width: 100%;
-  height: auto;
+  height: 100%; /* Set height to 100% to maintain aspect ratio */
+  object-fit: cover; /* Ensure the image covers the entire space */
   display: block;
   border-radius: 8px;
 }
 
 .gallery-item:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+  transform: scale(1.075); /* Increased scale for a more pronounced effect */
+  box-shadow: 0 6px 15px rgba(255, 255, 255, 0.3); /* Increased shadow for a more pronounced effect */
 }
 
 /* --------------------- Modal (Enlarged Image) --------------------- */
