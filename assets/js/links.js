@@ -6,13 +6,24 @@ document.addEventListener("DOMContentLoaded", () => {
   
     // Click Tracking
     links.forEach(link => {
-      link.addEventListener("click", (event) => {
-        console.log(`Clicked: ${event.target.innerText} - ${event.target.href}`);
+      link.addEventListener("click", async (event) => {
+        const linkText = event.target.innerText;
+        const linkUrl = event.target.href;
         
-        // Optional: Send this data to a backend for analytics
-        // fetch("/track-click", { method: "POST", body: JSON.stringify({ link: event.target.href }) });
+        console.log(`Clicked: ${linkText} - ${linkUrl}`);
   
-        // Visual effect (brief animation on click)
+        // Send data to the backend
+        try {
+          await fetch("https://your-render-backend.onrender.com/track-click", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: linkText, url: linkUrl })
+          });
+        } catch (err) {
+          console.error("Failed to log click:", err);
+        }
+  
+        // Click animation effect
         event.target.classList.add("clicked");
         setTimeout(() => {
           event.target.classList.remove("clicked");
