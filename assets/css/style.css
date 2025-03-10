@@ -530,51 +530,6 @@ body.index-page, html.index-page {
   width: 100vw;
   position: fixed; /* Prevents accidental movement */
 }
-/* --------------------- Gallery Page Styles --------------------- */
-
-body.gallery-page {
-  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
-  color: #e0e0e0;
-  overflow-y: auto;
-  text-align: center;
-}
-
-/* Gallery Grid Layout */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); /* Increased minimum width for even larger images */
-  gap: 45px; /* Increased gap for better spacing */
-  padding: 45px; /* Increased padding for better spacing */
-  max-width: 1500px; /* Increased max-width for even larger images */
-  margin: auto;
-}
-
-/* Individual Gallery Item */
-.gallery-item {
-  position: relative;
-  cursor: pointer;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.gallery-item img {
-  width: 100%;
-  height: 100%; /* Set height to 100% to maintain aspect ratio */
-  object-fit: cover; /* Ensure the image covers the entire space */
-  display: block;
-  border-radius: 8px;
-}
-
-.gallery-item:hover {
-  transform: scale(1.075); /* Increased scale for a more pronounced effect */
-  box-shadow: 0 6px 15px rgba(255, 255, 255, 0.3); /* Increased shadow for a more pronounced effect */
-}
-
-/* Override for the gallery page */
-.gallery-page body {
-  overflow-y: auto;
-}
 
 /* --------------------- Modal (Enlarged Image) --------------------- */
 .modal {
