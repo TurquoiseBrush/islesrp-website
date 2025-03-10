@@ -571,6 +571,11 @@ body.gallery-page {
   box-shadow: 0 6px 15px rgba(255, 255, 255, 0.3); /* Increased shadow for a more pronounced effect */
 }
 
+/* Override for the gallery page */
+.gallery-page body {
+  overflow-y: auto;
+}
+
 /* --------------------- Modal (Enlarged Image) --------------------- */
 .modal {
   display: none;
@@ -595,7 +600,7 @@ body.gallery-page {
 }
 
 .modal img {
-  max-width: 100%;
+  max-width: 75%;
   height: auto;
   border-radius: 8px;
 }
