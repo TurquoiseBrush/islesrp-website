@@ -1,38 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Social Media - IslesRP</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css" />
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </head>
 <body class="social-media-page">
+
   <!-- Fixed Home Button -->
   <a href="index.html" class="home-btn">Home</a>
 
   <header class="content">
-    <h1>Isles Server Social Media</h1>
-    <p>Stay updated with our latest posts and community highlights!</p>
+    <h1>📢 Isles Server Social Media</h1>
+    <p>Stay updated with our latest news, community content, and RP moments!</p>
   </header>
 
-  <!-- Posts Grid Container -->
+  <!-- Posts Grid -->
   <section class="social-media-content">
     <div class="posts-grid">
 
-      <!-- Pinned Post: Twitter Video Embed -->
+      <!-- Pinned Post -->
       <div class="post pinned-post">
         <div class="pin-badge">Pinned</div>
         <div class="twitter-container">
           <blockquote class="twitter-tweet" data-media-max-width="560">
             <p lang="en" dir="ltr">
               Dive into Creativity, IslesRP.
-              <a href="https://t.co/iOIKAaLnIW">https://t.co/iOIKAaLnIW</a> | 
-              <a href="https://twitter.com/hashtag/FiveM?src=hash&amp;ref_src=twsrc%5Etfw">#FiveM</a> | 
+              <a href="https://t.co/iOIKAaLnIW">https://t.co/iOIKAaLnIW</a> |
+              <a href="https://twitter.com/hashtag/FiveM?src=hash&amp;ref_src=twsrc%5Etfw">#FiveM</a> |
               <a href="https://twitter.com/hashtag/GTARP?src=hash&amp;ref_src=twsrc%5Etfw">#GTARP</a>
               <a href="https://t.co/c5rZv7RE8S">pic.twitter.com/c5rZv7RE8S</a>
             </p>
-            &mdash; IslesRoleplay (@Isles_RP) 
+            &mdash; IslesRoleplay (@Isles_RP)
             <a href="https://twitter.com/Isles_RP/status/1711339855421055111?ref_src=twsrc%5Etfw">
               October 9, 2023
             </a>
@@ -44,37 +45,47 @@
         </div>
       </div>
 
-      <!-- New Picture Post -->
+      <!-- Example Image Post -->
       <div class="post">
-        <img src="assets/images/social-media/lspd-crime.png" alt="Fake PD Robbery Turned Photo Op!">
+        <img
+          src="assets/images/social-media/lspd-crime.png"
+          alt="Fake PD Robbery Turned Photo Op!"
+          onclick="openModal(this.src, this.alt)"
+          style="cursor: pointer;"
+        />
         <div class="post-details">
-          <h3>Fake PD Robbery Turned Photo Op!</h3>
-          <p>Aya, Jake, Cody, and Scott pull off a store heist with LSPD officers Creature and Walsh—proving even criminals and cops can strike a pose together! #IslesRP #GangLife #LSPD</p>
-        </div>
-      </div>
-            <!-- New Picture Post -->
-      <!-- <div class="post">
-        <img src="assets/images/social-media/lspd-crime.png" alt="Fake PD Robbery Turned Photo Op!">
-        <div class="post-details">
-          <h3>Fake PD Robbery Turned Photo Op!</h3>
-          <p>Aya, Jake, Cody, and Scott pull off a store heist with LSPD officers Creature and Walsh—proving even criminals and cops can strike a pose together! #IslesRP #GangLife #LSPD</p>
-        </div>
-      </div> -->
-
-      <!-- Placeholder for future posts -->
-      <div class="post">
-        <div class="post-details">
-          <h3>More posts to come!</h3>
-          <p>Stay tuned for more updates and highlights from Isles Server.</p>
+          <h3>🚓 Fake PD Robbery Turned Photo Op!</h3>
+          <p>Aya, Jake, Cody, and Scott pull off a store heist with LSPD officers Creature and Walsh—proving even criminals and cops can strike a pose together! #IslesRP</p>
         </div>
       </div>
 
+      <!-- Placeholder -->
+      <div class="post">
+        <div class="post-details">
+          <h3>🕓 More posts coming soon!</h3>
+          <p>Stay tuned for more updates and highlights from IslesRP and our community!</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Button to visit socials.html -->
-    <a href="socials.html" class="btn instagram-btn">
-      View Our Socials!
-    </a>
+    <!-- Socials Button -->
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="socials.html" class="btn instagram-btn">
+        📲 View Our Socials!
+      </a>
+    </div>
   </section>
+
+  <!-- Modal for Enlarged Image -->
+  <div id="imageModal" class="modal" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <img id="modalImage" src="" alt="" />
+      <h3 id="modalTitle"></h3>
+    </div>
+  </div>
+
+  <!-- Load Modal Logic -->
+  <script src="assets/js/main.js"></script>
 </body>
 </html>
