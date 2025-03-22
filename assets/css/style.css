@@ -560,6 +560,24 @@ body.index-page, html.index-page {
 .social-media-content .btn.instagram-btn {
   margin-top: 20px;
 }
+/* Fade-In Animation */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply to posts */
+.post {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+  animation-delay: var(--fade-delay, 0s);
+}
 
 
 /* --------------------- Modal (Enlarged Image) --------------------- */
