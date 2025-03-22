@@ -578,3 +578,9 @@ body.index-page, html.index-page {
 .close:hover {
   color: #ff4444;
 }
+
+.post-image {
+  width: 100%; /* Adjust this value to set your desired width */
+  max-width: 600px; /* Maximum width to prevent it from getting too large */
+  height: auto; /* Maintain aspect ratio */
+}
