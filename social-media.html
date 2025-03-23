@@ -50,9 +50,10 @@
         <img
           src="assets/images/social-media/lspd-crime.png"
           alt="Fake PD Robbery Turned Photo Op!"
-          onclick="openModal(this.src, this.alt)"
+          onclick="openModal(this.src, this.alt, 'Aya, Jake, Cody, and Scott pull off a store heist with LSPD officers Creature and Walsh—proving even criminals and cops can strike a pose together! #IslesRP')"
           style="cursor: pointer;"
         />
+
         <div class="post-details">
           <h3>🚓 Fake PD Robbery Turned Photo Op!</h3>
           <p>Aya, Jake, Cody, and Scott pull off a store heist with LSPD officers Creature and Walsh—proving even criminals and cops can strike a pose together! #IslesRP</p>
@@ -82,8 +83,10 @@
       <span class="close" onclick="closeModal()">&times;</span>
       <img id="modalImage" src="" alt="" />
       <h3 id="modalTitle"></h3>
+      <p id="modalDescription"></p>
     </div>
   </div>
+
 
   <!-- Load Modal Logic -->
   <script src="assets/js/main.js"></script>

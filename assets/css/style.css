@@ -592,7 +592,20 @@ body.index-page, html.index-page {
   background-color: rgba(0, 0, 0, 0.8);
   justify-content: center;
   align-items: center;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.96);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
+
+.modal.show {
+  display: flex;
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
 
 .modal-content {
   position: relative;
@@ -601,20 +614,25 @@ body.index-page, html.index-page {
   border-radius: 10px;
   text-align: center;
   max-width: 80%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
 }
 
 .modal img {
   max-width: 75%;
   height: auto;
   border-radius: 8px;
+  transition: transform 0.3s ease;
 }
 
-.modal h3, .modal p {
+.modal h3,
+.modal p {
   color: #e0e0e0;
   margin-top: 10px;
+  font-size: 1.1rem;
+  line-height: 1.4;
 }
 
-/* Close Button */
 .close {
   position: absolute;
   top: 10px;
@@ -622,6 +640,7 @@ body.index-page, html.index-page {
   font-size: 24px;
   cursor: pointer;
   color: #fff;
+  transition: color 0.2s ease;
 }
 
 .close:hover {
