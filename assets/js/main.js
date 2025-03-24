@@ -1,7 +1,6 @@
 async function syncUserProfile(session) {
   const user = session?.user;
   const meta = user?.user_metadata;
-
   if (!user || !meta) return;
 
   const discordId = meta.provider_id;
@@ -9,11 +8,10 @@ async function syncUserProfile(session) {
 
   const { error } = await supabase
     .from("users")
-    .upsert({
-      id: user.id,
-      discord_id: discordId,
-      username: username,
-    }, { onConflict: "id" });
+    .upsert(
+      { id: user.id, discord_id: discordId, username: username },
+      { onConflict: "id" }
+    );
 
   if (error) console.error("❌ Failed to sync user:", error.message);
   else console.log("✅ User synced");
@@ -22,6 +20,8 @@ async function syncUserProfile(session) {
 async function fetchAndRenderPosts() {
   const grid = document.querySelector(".posts-grid");
   if (!grid) return;
+
+  grid.innerHTML = ""; // Clear old posts
 
   const { data: posts, error } = await supabase
     .from("social_media_posts")
@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modalDescription = document.getElementById("modalDescription");
   const closeModalButton = modal?.querySelector(".close");
 
+  // 🔐 Discord Login
   loginBtn?.addEventListener("click", async () => {
     localStorage.setItem("returnTo", window.location.pathname);
     const { error } = await supabase.auth.signInWithOAuth({
@@ -127,6 +128,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await fetchAndRenderPosts();
 
+  // 📸 Modal setup
   if (modal && modalImg && modalTitle && modalDescription && closeModalButton) {
     window.openModal = (imgSrc, title, description) => {
       if (!imgSrc) return;
@@ -153,12 +155,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     modal.addEventListener("click", (e) => {
       if (e.target === modal) closeModal();
     });
+
     closeModalButton?.addEventListener("click", closeModal);
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeModal();
     });
   }
 
+  // 📝 Post submission (via image URL)
   if (submitModal && openSubmitModalBtn && postForm && statusMsg && closeSubmitBtn) {
     openSubmitModalBtn.addEventListener("click", () => {
       submitModal.style.display = "flex";
@@ -178,41 +182,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     submitModal.addEventListener("click", (e) => {
       if (e.target === submitModal) closeSubmitModal();
     });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeSubmitModal();
-    });
 
     postForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const name = document.getElementById("inCityName")?.value.trim();
       const desc = document.getElementById("postDescription")?.value.trim();
-      const file = document.getElementById("postImage")?.files[0];
+      const imageUrl = document.getElementById("postImageUrl")?.value.trim();
 
-      if (!name || !desc || !file) {
+      if (!name || !desc || !imageUrl) {
         statusMsg.textContent = "Please fill out all fields.";
         return;
       }
 
-      statusMsg.textContent = "Uploading...";
+      if (!/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(imageUrl)) {
+        statusMsg.textContent = "Invalid image URL. Must end in .jpg, .png, etc.";
+        return;
+      }
+
+      statusMsg.textContent = "Submitting...";
 
       try {
-        const fileName = `${Date.now()}-${file.name}`;
-        const filePath = `${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('social-media')
-          .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data: publicData } = supabase
-          .storage.from('social-media')
-          .getPublicUrl(filePath);
-
-        const imageUrl = publicData?.publicUrl;
-        if (!imageUrl) throw new Error("Could not retrieve image URL");
-
         const { error: insertError } = await supabase
           .from("social_media_posts")
           .insert({
@@ -226,7 +216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         statusMsg.textContent = "✅ Post submitted successfully!";
         postForm.reset();
-        await fetchAndRenderPosts(); // Refresh with new post
+        await fetchAndRenderPosts();
       } catch (err) {
         console.error("❌ Upload failed:", err);
         statusMsg.textContent = "❌ Upload failed. Please try again.";
