@@ -19,6 +19,20 @@
   <section id="adminControls" style="display: none; text-align: center; padding: 40px 20px;">
     <h2>✅ Welcome, Admin</h2>
     <p>You can manage the site from here. (More tools coming soon)</p>
+    <div class="admin-section">
+        <h3>🎭 Manage User Roles</h3>
+        <table id="userTable" class="admin-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Discord ID</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      
     <!-- Future admin tools go here -->
   </section>
 
@@ -54,5 +68,65 @@
       controls.style.display = "block";
     });
   </script>
+  <script>
+    async function loadUserList() {
+      const table = document.getElementById("userTable").querySelector("tbody");
+      table.innerHTML = "";
+  
+      const { data: users, error } = await supabase
+        .from("users")
+        .select("id, username, discord_id, role")
+        .order("joined_at", { ascending: false });
+  
+      if (error) {
+        console.error("Failed to fetch users:", error.message);
+        return;
+      }
+  
+      users.forEach(user => {
+        const row = document.createElement("tr");
+  
+        row.innerHTML = `
+          <td>${user.username}</td>
+          <td>${user.discord_id}</td>
+          <td>
+            <select data-user-id="${user.id}">
+              <option value="user" ${user.role === "user" ? "selected" : ""}>User</option>
+              <option value="media" ${user.role === "media" ? "selected" : ""}>Media</option>
+              <option value="admin" ${user.role === "admin" ? "selected" : ""}>Admin</option>
+            </select>
+          </td>
+        `;
+  
+        table.appendChild(row);
+      });
+  
+      // Role change listener
+      table.querySelectorAll("select").forEach(select => {
+        select.addEventListener("change", async (e) => {
+          const userId = e.target.dataset.userId;
+          const newRole = e.target.value;
+  
+          const { error } = await supabase
+            .from("users")
+            .update({ role: newRole })
+            .eq("id", userId);
+  
+          if (error) {
+            alert("❌ Failed to update role");
+            console.error(error);
+          } else {
+            alert("✅ Role updated!");
+          }
+        });
+      });
+    }
+  
+    // After admin check success:
+    if (controls.style.display === "block") {
+      loadUserList();
+    }
+  </script>
+  
 </body>
 </html>

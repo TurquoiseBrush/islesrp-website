@@ -652,3 +652,38 @@ body.index-page, html.index-page {
   max-width: 600px; /* Maximum width to prevent it from getting too large */
   height: auto; /* Maintain aspect ratio */
 }
+
+
+/*---------------admin page------------------*/
+.admin-table {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 50px;
+  border-collapse: collapse;
+  background: #1e1e1e;
+  color: #e0e0e0;
+}
+
+.admin-table th, .admin-table td {
+  border: 1px solid #444;
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: #292929;
+  font-weight: bold;
+}
+
+.admin-table tr:hover {
+  background-color: #2d2d2d;
+}
+
+.admin-table select {
+  padding: 4px 8px;
+  font-size: 0.95em;
+  background: #2c2c2c;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+}
