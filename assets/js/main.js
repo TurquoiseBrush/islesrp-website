@@ -8,10 +8,7 @@ async function syncUserProfile(session) {
 
   const { error } = await supabase
     .from("users")
-    .upsert(
-      { id: user.id, discord_id: discordId, username: username },
-      { onConflict: "id" }
-    );
+    .upsert({ id: user.id, discord_id: discordId, username }, { onConflict: "id" });
 
   if (error) console.error("❌ Failed to sync user:", error.message);
   else console.log("✅ User synced");
@@ -21,7 +18,7 @@ async function fetchAndRenderPosts() {
   const grid = document.querySelector(".posts-grid");
   if (!grid) return;
 
-  grid.innerHTML = ""; // Clear old posts
+  grid.innerHTML = ""; // Clear current posts
 
   const { data: posts, error } = await supabase
     .from("social_media_posts")
@@ -70,14 +67,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modalDescription = document.getElementById("modalDescription");
   const closeModalButton = modal?.querySelector(".close");
 
-  // 🔐 Discord Login
+  // Auth
   loginBtn?.addEventListener("click", async () => {
     localStorage.setItem("returnTo", window.location.pathname);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'discord',
-      options: {
-        redirectTo: `${window.location.origin}/auth-handler.html`
-      }
+      options: { redirectTo: `${window.location.origin}/auth-handler.html` }
     });
     if (error) console.error("❌ Discord login failed:", error.message);
   });
@@ -90,7 +85,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const { data: { session } } = await supabase.auth.getSession();
   const user = session?.user;
   const meta = user?.user_metadata;
-  const discordId = meta?.provider_id;
   const username = meta?.full_name || meta?.name || "Unknown";
 
   if (session) await syncUserProfile(session);
@@ -98,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (user) {
     authInfo.style.display = "block";
     userInfo.textContent = `✅ Logged in as ${username}`;
-    loginBtn?.style?.setProperty("display", "none");
+    loginBtn?.style.setProperty("display", "none");
 
     const { data: userData, error: roleError } = await supabase
       .from("users")
@@ -110,10 +104,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.warn("⚠️ Could not fetch user role:", roleError.message);
     } else {
       const { role, banned } = userData;
-
       if (banned) {
-        console.warn("🚫 You are banned from posting.");
         openSubmitModalBtn?.remove();
+        console.warn("🚫 You are banned from posting.");
       } else if (["admin", "media"].includes(role)) {
         openSubmitModalBtn.style.display = "inline-block";
       } else {
@@ -122,13 +115,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   } else {
     authInfo.style.display = "none";
-    openSubmitModalBtn?.style?.setProperty("display", "none");
-    loginBtn?.style?.setProperty("display", "inline-block");
+    openSubmitModalBtn?.style.setProperty("display", "none");
+    loginBtn?.style.setProperty("display", "inline-block");
   }
 
   await fetchAndRenderPosts();
 
-  // 📸 Modal setup
+  // Modal viewer
   if (modal && modalImg && modalTitle && modalDescription && closeModalButton) {
     window.openModal = (imgSrc, title, description) => {
       if (!imgSrc) return;
@@ -155,14 +148,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     modal.addEventListener("click", (e) => {
       if (e.target === modal) closeModal();
     });
-
     closeModalButton?.addEventListener("click", closeModal);
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeModal();
     });
   }
 
-  // 📝 Post submission (via image URL)
+  // Submit post
   if (submitModal && openSubmitModalBtn && postForm && statusMsg && closeSubmitBtn) {
     openSubmitModalBtn.addEventListener("click", () => {
       submitModal.style.display = "flex";
@@ -196,7 +188,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       if (!/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(imageUrl)) {
-        statusMsg.textContent = "Invalid image URL. Must end in .jpg, .png, etc.";
+        statusMsg.textContent = "❌ Invalid image URL. Must end with .jpg, .png, etc.";
         return;
       }
 
