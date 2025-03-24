@@ -1,44 +1,65 @@
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("✅ main.js loaded");
 
-  // === Supabase Session Check ===
-  const { data: { session } } = await supabase.auth.getSession();
-  const isLoggedIn = !!session;
-  window.isLoggedInUser = isLoggedIn;
-
   const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const authInfo = document.getElementById("authInfo");
+  const userInfo = document.getElementById("userInfo");
   const openSubmitModalBtn = document.getElementById("openSubmitModal");
 
-  if (loginBtn) {
-    loginBtn.addEventListener("click", async () => {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'discord',
-      });
-      if (error) {
-        console.error("❌ Discord login failed:", error.message);
-      } else {
-        console.log("✅ Redirecting to Discord login...");
-      }
-    });
-  }
+  const submitModal = document.getElementById("submitModal");
+  const postForm = document.getElementById("postForm");
+  const statusMsg = document.getElementById("submissionStatus");
+  const closeSubmitBtn = submitModal?.querySelector(".close");
 
-  // Show submit button if logged in
-  if (openSubmitModalBtn && isLoggedIn) {
-    openSubmitModalBtn.style.display = "inline-block";
-  }
-
-  // === Image Modal Elements ===
   const modal = document.getElementById("imageModal");
   const modalImg = document.getElementById("modalImage");
   const modalTitle = document.getElementById("modalTitle");
   const modalDescription = document.getElementById("modalDescription");
   const closeModalButton = modal?.querySelector(".close");
 
-  // === Submit Modal Elements ===
-  const submitModal = document.getElementById("submitModal");
-  const postForm = document.getElementById("postForm");
-  const statusMsg = document.getElementById("submissionStatus");
-  const closeSubmitBtn = submitModal?.querySelector(".close");
+  // 🔐 Whitelisted Discord IDs allowed to post
+  const ALLOWED_DISCORD_IDS = [
+    "123456789012345678",
+    "234567890123456789"
+  ];
+
+  // 🌐 Supabase Session & Auth UI Setup
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  const meta = user?.user_metadata;
+  const discordId = meta?.provider_id;
+  const username = meta?.full_name || meta?.name || "Unknown";
+
+  if (user) {
+    authInfo.style.display = "block";
+    userInfo.textContent = `✅ Logged in as ${username}`;
+    if (ALLOWED_DISCORD_IDS.includes(discordId)) {
+      openSubmitModalBtn.style.display = "inline-block";
+    } else {
+      openSubmitModalBtn.style.display = "none";
+      console.warn("🚫 This user is not allowed to post.");
+    }
+  } else {
+    authInfo.style.display = "none";
+    openSubmitModalBtn.style.display = "none";
+  }
+
+  // 🟢 Login with Discord
+  loginBtn?.addEventListener("click", async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'discord',
+    });
+    if (error) {
+      console.error("❌ Discord login failed:", error.message);
+    }
+  });
+
+  // 🔴 Logout
+  logoutBtn?.addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    window.location.reload();
+  });
 
   // =======================
   // 📸 IMAGE PREVIEW MODAL
@@ -46,12 +67,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (modal && modalImg && modalTitle && modalDescription && closeModalButton) {
     window.openModal = (imgSrc, title, description) => {
       if (!imgSrc) return;
-
       modalImg.src = imgSrc;
       modalImg.alt = title || "";
       modalTitle.textContent = title || "";
       modalDescription.textContent = description || "";
-
       modal.style.display = "flex";
       requestAnimationFrame(() => modal.classList.add("show"));
       document.documentElement.style.overflow = "hidden";
@@ -72,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (e.target === modal) closeModal();
     });
 
-    closeModalButton.addEventListener("click", closeModal);
+    closeModalButton?.addEventListener("click", closeModal);
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeModal();
     });
@@ -96,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }, 300);
     };
 
-    closeSubmitBtn.addEventListener("click", closeSubmitModal);
+    closeSubmitBtn?.addEventListener("click", closeSubmitModal);
     submitModal.addEventListener("click", (e) => {
       if (e.target === submitModal) closeSubmitModal();
     });
@@ -120,18 +139,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       statusMsg.textContent = "Uploading...";
 
       try {
-        const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}-${file.name}`;
         const filePath = `${fileName}`;
 
-        // Upload image to Supabase storage
         const { error: uploadError } = await supabase.storage
           .from('social-media')
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
-        // Get public image URL
         const { data: publicData } = supabase
           .storage
           .from('social-media')
@@ -140,13 +156,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         const imageUrl = publicData?.publicUrl;
         if (!imageUrl) throw new Error("Could not retrieve image URL");
 
-        // Insert post record
         const { error: insertError } = await supabase
           .from("social_media_posts")
           .insert({
             name,
             description: desc,
-            image_url: imageUrl
+            image_url: imageUrl,
+            user_id: user?.id
           });
 
         if (insertError) throw insertError;
