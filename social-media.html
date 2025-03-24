@@ -27,52 +27,7 @@
   <!-- Posts Grid -->
   <section class="social-media-content">
     <div class="posts-grid">
-
-      <!-- Pinned Post -->
-      <div class="post pinned-post" style="--fade-delay: 0s;">
-        <div class="pin-badge">Pinned</div>
-        <div class="twitter-container">
-          <blockquote class="twitter-tweet" data-media-max-width="560">
-            <p lang="en" dir="ltr">
-              Dive into Creativity, IslesRP.
-              <a href="https://t.co/iOIKAaLnIW">https://t.co/iOIKAaLnIW</a> |
-              <a href="https://twitter.com/hashtag/FiveM?src=hash&amp;ref_src=twsrc%5Etfw">#FiveM</a> |
-              <a href="https://twitter.com/hashtag/GTARP?src=hash&amp;ref_src=twsrc%5Etfw">#GTARP</a>
-              <a href="https://t.co/c5rZv7RE8S">pic.twitter.com/c5rZv7RE8S</a>
-            </p>
-            &mdash; IslesRoleplay (@Isles_RP)
-            <a href="https://twitter.com/Isles_RP/status/1711339855421055111?ref_src=twsrc%5Etfw">
-              October 9, 2023
-            </a>
-          </blockquote>
-        </div>
-        <div class="post-details twitter-description">
-          <h3>IslesRP Showcase</h3>
-          <p>Dive into Creativity, IslesRP.</p>
-        </div>
-      </div>
-
-      <!-- Example Image Post -->
-      <div class="post" style="--fade-delay: 0.1s;">
-        <img
-          src="assets/images/social-media/lspd-crime.png"
-          alt="Fake PD Robbery Turned Photo Op!"
-          onclick="openModal(this.src, this.alt, 'Aya, Jake, Cody, and Scott pull off a store heist with LSPD officers Creature and Walsh—proving even criminals and cops can strike a pose together! #IslesRP')"
-          style="cursor: pointer;"
-        />
-        <div class="post-details">
-          <h3>🚓 Fake PD Robbery Turned Photo Op!</h3>
-          <p>Aya, Jake, Cody, and Scott pull off a store heist with LSPD officers Creature and Walsh—proving even criminals and cops can strike a pose together! #IslesRP</p>
-        </div>
-      </div>
-
-      <!-- Placeholder -->
-      <div class="post" style="--fade-delay: 0.2s;">
-        <div class="post-details">
-          <h3>🕓 More posts coming soon!</h3>
-          <p>Stay tuned for more updates and highlights from IslesRP and our community!</p>
-        </div>
-      </div>
+      <!-- Dynamic posts will be loaded here via main.js -->
     </div>
 
     <!-- Socials Button -->
@@ -102,7 +57,6 @@
     <button id="logoutBtn" class="btn instagram-btn">🔓 Logout</button>
   </div>
 
-  
   <!-- Submit Post Modal -->
   <div id="submitModal" class="modal" onclick="closeSubmitModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
@@ -110,9 +64,10 @@
       <h3>📸 Submit a Social Post</h3>
 
       <form id="postForm">
-        <input type="text" id="inCityName" placeholder="Your In-City Name" required />
+        <!-- New post title field -->
+        <input type="text" id="postTitle" placeholder="Post Title" required />
         <textarea id="postDescription" placeholder="Post Description (max 200 characters)" maxlength="200" required></textarea>
-        <<input type="url" id="postImageUrl" placeholder="Image URL" required />
+        <input type="url" id="postImageUrl" placeholder="Image URL" required />
         <button type="submit" class="btn instagram-btn">Submit Post</button>
         <p id="submissionStatus" style="margin-top: 10px;"></p>
       </form>

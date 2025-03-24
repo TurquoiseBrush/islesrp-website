@@ -47,20 +47,21 @@ async function fetchAndRenderPosts() {
     postDiv.className = "post";
     postDiv.style = `--fade-delay: ${0.3 + i * 0.1}s`;
 
-    // Get the poster's information from the joined users data
+    // Get the poster's info from the joined users data
     const posterName = post.user?.username || "Unknown";
     const posterRole = post.user?.role || "";
     const roleBadge = getBadgeForRole(posterRole);
-    const postTitle = post.title;
+    const postTitle = post.title || ""; // post title
+    const postDescription = post.description || "";
 
     postDiv.innerHTML = `
       <div class="poster-info">
         <span class="poster-name">${posterName}</span> ${roleBadge}
       </div>
-      <img src="${post.image_url}" alt="${postTitle}" onclick="openModal('${post.image_url}', '${postTitle}', \`${post.description}\`)" style="cursor: pointer;" />
+      <img src="${post.image_url}" alt="${postTitle}" onclick="openModal('${post.image_url}', '${postTitle}', \`${postDescription}\`)" style="cursor: pointer;" />
       <div class="post-details">
         <h3>${postTitle}</h3>
-        <p>${post.description}</p>
+        <p>${postDescription}</p>
       </div>
     `;
     grid.appendChild(postDiv);
@@ -198,7 +199,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     postForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // Updated input: use "postTitle" for the post title field
+      // The form should now have three fields:
+      // - "postTitle" for the post title (to appear below the image)
+      // - "postDescription" for the description
+      // - "postImageUrl" for the image link
       const title = document.getElementById("postTitle")?.value.trim();
       const desc = document.getElementById("postDescription")?.value.trim();
       const imageUrl = document.getElementById("postImageUrl")?.value.trim();
@@ -223,6 +227,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             description: desc,
             image_url: imageUrl,
             user_id: user?.id
+            // Notice we are not inserting into "name" because that value is obtained via the join from the users table.
           });
 
         if (insertError) throw insertError;
