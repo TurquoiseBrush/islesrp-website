@@ -19,6 +19,37 @@ async function syncUserProfile(session) {
   else console.log("✅ User synced");
 }
 
+async function fetchAndRenderPosts() {
+  const grid = document.querySelector(".posts-grid");
+  if (!grid) return;
+
+  const { data: posts, error } = await supabase
+    .from("social_media_posts")
+    .select("id, name, description, image_url")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("❌ Failed to fetch posts:", error.message);
+    return;
+  }
+
+  posts.forEach((post, i) => {
+    const postDiv = document.createElement("div");
+    postDiv.className = "post";
+    postDiv.style = `--fade-delay: ${0.3 + i * 0.1}s`;
+
+    postDiv.innerHTML = `
+      <img src="${post.image_url}" alt="${post.name}" onclick="openModal('${post.image_url}', '${post.name}', \`${post.description}\`)" style="cursor: pointer;" />
+      <div class="post-details">
+        <h3>${post.name}</h3>
+        <p>${post.description}</p>
+      </div>
+    `;
+
+    grid.appendChild(postDiv);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("✅ main.js loaded");
 
@@ -39,7 +70,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modalDescription = document.getElementById("modalDescription");
   const closeModalButton = modal?.querySelector(".close");
 
-  // 🔐 Login via Discord
   loginBtn?.addEventListener("click", async () => {
     localStorage.setItem("returnTo", window.location.pathname);
     const { error } = await supabase.auth.signInWithOAuth({
@@ -51,13 +81,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (error) console.error("❌ Discord login failed:", error.message);
   });
 
-  // 🔓 Logout
   logoutBtn?.addEventListener("click", async () => {
     await supabase.auth.signOut();
     window.location.reload();
   });
 
-  // 🟢 Session Info
   const { data: { session } } = await supabase.auth.getSession();
   const user = session?.user;
   const meta = user?.user_metadata;
@@ -69,7 +97,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (user) {
     authInfo.style.display = "block";
     userInfo.textContent = `✅ Logged in as ${username}`;
-    loginBtn?.style.display = "none";
+    loginBtn?.style?.setProperty("display", "none");
 
     const { data: userData, error: roleError } = await supabase
       .from("users")
@@ -84,23 +112,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (banned) {
         console.warn("🚫 You are banned from posting.");
-        openSubmitModalBtn?.remove(); // remove if banned
+        openSubmitModalBtn?.remove();
       } else if (["admin", "media"].includes(role)) {
         openSubmitModalBtn.style.display = "inline-block";
       } else {
         openSubmitModalBtn.style.display = "none";
-        console.warn("🚫 Not authorized to post.");
       }
     }
   } else {
     authInfo.style.display = "none";
-    openSubmitModalBtn.style.display = "none";
-    loginBtn?.style.display = "inline-block";
+    openSubmitModalBtn?.style?.setProperty("display", "none");
+    loginBtn?.style?.setProperty("display", "inline-block");
   }
 
-  // ============================
-  // 📸 Image Modal Viewer Setup
-  // ============================
+  await fetchAndRenderPosts();
+
   if (modal && modalImg && modalTitle && modalDescription && closeModalButton) {
     window.openModal = (imgSrc, title, description) => {
       if (!imgSrc) return;
@@ -133,9 +159,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // ============================
-  // 📝 Post Submission Modal
-  // ============================
   if (submitModal && openSubmitModalBtn && postForm && statusMsg && closeSubmitBtn) {
     openSubmitModalBtn.addEventListener("click", () => {
       submitModal.style.display = "flex";
@@ -177,8 +200,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const fileName = `${Date.now()}-${file.name}`;
         const filePath = `${fileName}`;
 
-        const { error: uploadError } = await supabase
-          .storage.from('social-media')
+        const { error: uploadError } = await supabase.storage
+          .from('social-media')
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
@@ -203,6 +226,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         statusMsg.textContent = "✅ Post submitted successfully!";
         postForm.reset();
+        await fetchAndRenderPosts(); // Refresh with new post
       } catch (err) {
         console.error("❌ Upload failed:", err);
         statusMsg.textContent = "❌ Upload failed. Please try again.";
