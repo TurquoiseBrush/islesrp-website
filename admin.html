@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Panel - IslesRP</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="admin-page">
+  <a href="index.html" class="home-btn">🏠 Home</a>
+
+  <header class="content">
+    <h1>🛠️ IslesRP Admin Panel</h1>
+    <p id="adminStatus">Checking authorization...</p>
+  </header>
+
+  <section id="adminControls" style="display: none; text-align: center;">
+    <p>Welcome, Admin. You can manage content here.</p>
+    <!-- Add more controls here later -->
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="assets/js/config.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user;
+      const status = document.getElementById("adminStatus");
+      const controls = document.getElementById("adminControls");
+
+      if (!user) {
+        status.textContent = "❌ You must be logged in.";
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("users")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (error || !data) {
+        status.textContent = "❌ Could not verify role.";
+        return;
+      }
+
+      if (data.role !== "admin") {
+        status.textContent = "⛔ Access denied. Admins only.";
+        return;
+      }
+
+      status.textContent = "✅ Access granted. Welcome, Admin!";
+      controls.style.display = "block";
+    });
+  </script>
+</body>
+</html>

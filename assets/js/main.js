@@ -74,13 +74,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (user) {
     authInfo.style.display = "block";
     userInfo.textContent = `✅ Logged in as ${username}`;
-
+  
+    // Hide login button if present
+    if (loginBtn) loginBtn.style.display = "none";
+  
     const { data: userRoleData, error: roleError } = await supabase
       .from("users")
       .select("role")
       .eq("id", user.id)
       .single();
-
+  
     if (roleError) {
       console.warn("⚠️ Could not fetch user role:", roleError.message);
     } else if (["admin", "media"].includes(userRoleData.role)) {
@@ -92,7 +95,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else {
     authInfo.style.display = "none";
     openSubmitModalBtn.style.display = "none";
+  
+    // Show login button again
+    if (loginBtn) loginBtn.style.display = "inline-block";
   }
+  
 
   // =======================
   // 📸 IMAGE PREVIEW MODAL
