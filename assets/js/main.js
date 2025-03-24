@@ -1,3 +1,26 @@
+async function syncUserProfile(session) {
+  const user = session?.user;
+  const meta = user?.user_metadata;
+
+  if (!user || !meta) return;
+
+  const discordId = meta.provider_id;
+  const username = meta.full_name || meta.name || "Unknown";
+
+  const { error } = await supabase
+    .from("users")
+    .upsert({
+      id: user.id,
+      discord_id: discordId,
+      username: username,
+    }, {
+      onConflict: 'id'
+    });
+
+  if (error) console.error("❌ Failed to sync user:", error.message);
+  else console.log("✅ User synced");
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("✅ main.js loaded");
 
@@ -18,34 +41,40 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modalDescription = document.getElementById("modalDescription");
   const closeModalButton = modal?.querySelector(".close");
 
-  // 🔐 Whitelisted Discord IDs allowed to post
-  const ALLOWED_DISCORD_IDS = [
-    "123456789012345678",
-    "234567890123456789"
-  ];
-
-  // 🌐 Supabase Session & Auth UI Setup
+  // 🟢 Check session & user
   const { data: { session } } = await supabase.auth.getSession();
   const user = session?.user;
   const meta = user?.user_metadata;
   const discordId = meta?.provider_id;
   const username = meta?.full_name || meta?.name || "Unknown";
 
+  if (session) await syncUserProfile(session);
+
   if (user) {
     authInfo.style.display = "block";
     userInfo.textContent = `✅ Logged in as ${username}`;
-    if (ALLOWED_DISCORD_IDS.includes(discordId)) {
+
+    // 🔐 Role Check
+    const { data: userRoleData, error: roleError } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (roleError) {
+      console.warn("⚠️ Could not fetch user role:", roleError.message);
+    } else if (["admin", "media"].includes(userRoleData.role)) {
       openSubmitModalBtn.style.display = "inline-block";
     } else {
       openSubmitModalBtn.style.display = "none";
-      console.warn("🚫 This user is not allowed to post.");
+      console.warn("🚫 Not authorized to post.");
     }
   } else {
     authInfo.style.display = "none";
     openSubmitModalBtn.style.display = "none";
   }
 
-  // 🟢 Login with Discord
+  // 🔐 Login
   loginBtn?.addEventListener("click", async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'discord',
@@ -55,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // 🔴 Logout
+  // 🔓 Logout
   logoutBtn?.addEventListener("click", async () => {
     await supabase.auth.signOut();
     window.location.reload();
