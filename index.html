@@ -108,6 +108,14 @@
       });
     });
   </script>
+<script>
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN') {
+      console.log("✅ Logged in via Discord redirect");
+      window.location.href = "social-media.html"; // or dashboard.html etc
+    }
+  });
+</script>
 
 </body>
 </html>

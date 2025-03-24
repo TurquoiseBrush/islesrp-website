@@ -41,7 +41,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modalDescription = document.getElementById("modalDescription");
   const closeModalButton = modal?.querySelector(".close");
 
-  // 🟢 Check session & user
+  // 🔐 Login with redirect to auth-handler.html
+  loginBtn?.addEventListener("click", async () => {
+    localStorage.setItem("returnTo", window.location.pathname);
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'discord',
+      options: {
+        redirectTo: `${window.location.origin}/auth-handler.html`
+      }
+    });
+
+    if (error) {
+      console.error("❌ Discord login failed:", error.message);
+    }
+  });
+
+  logoutBtn?.addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    window.location.reload();
+  });
+
+  // 🟢 Session Setup & Role Check
   const { data: { session } } = await supabase.auth.getSession();
   const user = session?.user;
   const meta = user?.user_metadata;
@@ -54,7 +75,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     authInfo.style.display = "block";
     userInfo.textContent = `✅ Logged in as ${username}`;
 
-    // 🔐 Role Check
     const { data: userRoleData, error: roleError } = await supabase
       .from("users")
       .select("role")
@@ -73,22 +93,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     authInfo.style.display = "none";
     openSubmitModalBtn.style.display = "none";
   }
-
-  // 🔐 Login
-  loginBtn?.addEventListener("click", async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'discord',
-    });
-    if (error) {
-      console.error("❌ Discord login failed:", error.message);
-    }
-  });
-
-  // 🔓 Logout
-  logoutBtn?.addEventListener("click", async () => {
-    await supabase.auth.signOut();
-    window.location.reload();
-  });
 
   // =======================
   // 📸 IMAGE PREVIEW MODAL

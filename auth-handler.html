@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Authenticating...</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="auth-handler-page">
+  <div style="text-align: center; padding: 80px 20px;">
+    <h1>🔄 Logging you in...</h1>
+    <p>Please wait while we complete authentication with Discord.</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="assets/js/config.js"></script>
+  <script>
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN") {
+        console.log("✅ User signed in via redirect.");
+
+        // Optional: store in localStorage to resume previous page
+        const returnTo = localStorage.getItem("returnTo") || "social-media.html";
+
+        // Clear temp redirect storage
+        localStorage.removeItem("returnTo");
+
+        // Redirect to previous page or default
+        window.location.href = returnTo;
+      }
+    });
+
+    // Ensure session resumes even if statechange doesn’t trigger
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        const returnTo = localStorage.getItem("returnTo") || "social-media.html";
+        localStorage.removeItem("returnTo");
+        window.location.href = returnTo;
+      }
+    });
+  </script>
+</body>
+</html>
