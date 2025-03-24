@@ -14,16 +14,27 @@ async function syncUserProfile(session) {
   else console.log("✅ User synced");
 }
 
+// Helper to return a badge HTML based on user role
+function getBadgeForRole(role) {
+  if (role === 'admin') {
+    return '<span class="badge badge-admin">Admin</span>';
+  } else if (role === 'media') {
+    return '<span class="badge badge-media">Media</span>';
+  } else {
+    return ''; // No badge for regular users
+  }
+}
+
 async function fetchAndRenderPosts() {
   const grid = document.querySelector(".posts-grid");
   if (!grid) return;
 
   grid.innerHTML = ""; // Clear current posts
 
-  // Updated table name to 'posts' after reset
+  // Query posts with a join to fetch the posting user's username and role
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("id, name, description, image_url")
+    .select("id, title, description, image_url, created_at, user:users(username, role)")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -36,14 +47,22 @@ async function fetchAndRenderPosts() {
     postDiv.className = "post";
     postDiv.style = `--fade-delay: ${0.3 + i * 0.1}s`;
 
+    // Get the poster's information from the joined users data
+    const posterName = post.user?.username || "Unknown";
+    const posterRole = post.user?.role || "";
+    const roleBadge = getBadgeForRole(posterRole);
+    const postTitle = post.title;
+
     postDiv.innerHTML = `
-      <img src="${post.image_url}" alt="${post.name}" onclick="openModal('${post.image_url}', '${post.name}', \`${post.description}\`)" style="cursor: pointer;" />
+      <div class="poster-info">
+        <span class="poster-name">${posterName}</span> ${roleBadge}
+      </div>
+      <img src="${post.image_url}" alt="${postTitle}" onclick="openModal('${post.image_url}', '${postTitle}', \`${post.description}\`)" style="cursor: pointer;" />
       <div class="post-details">
-        <h3>${post.name}</h3>
+        <h3>${postTitle}</h3>
         <p>${post.description}</p>
       </div>
     `;
-
     grid.appendChild(postDiv);
   });
 }
@@ -179,11 +198,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     postForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const name = document.getElementById("inCityName")?.value.trim();
+      // Updated input: use "postTitle" for the post title field
+      const title = document.getElementById("postTitle")?.value.trim();
       const desc = document.getElementById("postDescription")?.value.trim();
       const imageUrl = document.getElementById("postImageUrl")?.value.trim();
 
-      if (!name || !desc || !imageUrl) {
+      if (!title || !desc || !imageUrl) {
         statusMsg.textContent = "Please fill out all fields.";
         return;
       }
@@ -196,11 +216,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       statusMsg.textContent = "Submitting...";
 
       try {
-        // Updated table name to 'posts' after reset
         const { error: insertError } = await supabase
           .from("posts")
           .insert({
-            name,
+            title,
             description: desc,
             image_url: imageUrl,
             user_id: user?.id
