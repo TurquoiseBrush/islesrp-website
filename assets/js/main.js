@@ -13,9 +13,7 @@ async function syncUserProfile(session) {
       id: user.id,
       discord_id: discordId,
       username: username,
-    }, {
-      onConflict: 'id'
-    });
+    }, { onConflict: "id" });
 
   if (error) console.error("❌ Failed to sync user:", error.message);
   else console.log("✅ User synced");
@@ -41,28 +39,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modalDescription = document.getElementById("modalDescription");
   const closeModalButton = modal?.querySelector(".close");
 
-  // 🔐 Login with redirect to auth-handler.html
+  // 🔐 Login via Discord
   loginBtn?.addEventListener("click", async () => {
     localStorage.setItem("returnTo", window.location.pathname);
-
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'discord',
       options: {
         redirectTo: `${window.location.origin}/auth-handler.html`
       }
     });
-
-    if (error) {
-      console.error("❌ Discord login failed:", error.message);
-    }
+    if (error) console.error("❌ Discord login failed:", error.message);
   });
 
+  // 🔓 Logout
   logoutBtn?.addEventListener("click", async () => {
     await supabase.auth.signOut();
     window.location.reload();
   });
 
-  // 🟢 Session Setup & Role Check
+  // 🟢 Session Info
   const { data: { session } } = await supabase.auth.getSession();
   const user = session?.user;
   const meta = user?.user_metadata;
@@ -74,36 +69,38 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (user) {
     authInfo.style.display = "block";
     userInfo.textContent = `✅ Logged in as ${username}`;
-  
-    // Hide login button if present
-    if (loginBtn) loginBtn.style.display = "none";
-  
-    const { data: userRoleData, error: roleError } = await supabase
+    loginBtn?.style.display = "none";
+
+    const { data: userData, error: roleError } = await supabase
       .from("users")
-      .select("role")
+      .select("role, banned")
       .eq("id", user.id)
       .single();
-  
+
     if (roleError) {
       console.warn("⚠️ Could not fetch user role:", roleError.message);
-    } else if (["admin", "media"].includes(userRoleData.role)) {
-      openSubmitModalBtn.style.display = "inline-block";
     } else {
-      openSubmitModalBtn.style.display = "none";
-      console.warn("🚫 Not authorized to post.");
+      const { role, banned } = userData;
+
+      if (banned) {
+        console.warn("🚫 You are banned from posting.");
+        openSubmitModalBtn?.remove(); // remove if banned
+      } else if (["admin", "media"].includes(role)) {
+        openSubmitModalBtn.style.display = "inline-block";
+      } else {
+        openSubmitModalBtn.style.display = "none";
+        console.warn("🚫 Not authorized to post.");
+      }
     }
   } else {
     authInfo.style.display = "none";
     openSubmitModalBtn.style.display = "none";
-  
-    // Show login button again
-    if (loginBtn) loginBtn.style.display = "inline-block";
+    loginBtn?.style.display = "inline-block";
   }
-  
 
-  // =======================
-  // 📸 IMAGE PREVIEW MODAL
-  // =======================
+  // ============================
+  // 📸 Image Modal Viewer Setup
+  // ============================
   if (modal && modalImg && modalTitle && modalDescription && closeModalButton) {
     window.openModal = (imgSrc, title, description) => {
       if (!imgSrc) return;
@@ -130,16 +127,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     modal.addEventListener("click", (e) => {
       if (e.target === modal) closeModal();
     });
-
     closeModalButton?.addEventListener("click", closeModal);
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeModal();
     });
   }
 
-  // ===========================
-  // 📝 SUBMIT POST MODAL
-  // ===========================
+  // ============================
+  // 📝 Post Submission Modal
+  // ============================
   if (submitModal && openSubmitModalBtn && postForm && statusMsg && closeSubmitBtn) {
     openSubmitModalBtn.addEventListener("click", () => {
       submitModal.style.display = "flex";
@@ -159,7 +155,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     submitModal.addEventListener("click", (e) => {
       if (e.target === submitModal) closeSubmitModal();
     });
-
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeSubmitModal();
     });
@@ -182,15 +177,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         const fileName = `${Date.now()}-${file.name}`;
         const filePath = `${fileName}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from('social-media')
+        const { error: uploadError } = await supabase
+          .storage.from('social-media')
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
         const { data: publicData } = supabase
-          .storage
-          .from('social-media')
+          .storage.from('social-media')
           .getPublicUrl(filePath);
 
         const imageUrl = publicData?.publicUrl;
@@ -210,7 +204,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         statusMsg.textContent = "✅ Post submitted successfully!";
         postForm.reset();
       } catch (err) {
-        console.error(err);
+        console.error("❌ Upload failed:", err);
         statusMsg.textContent = "❌ Upload failed. Please try again.";
       }
     });

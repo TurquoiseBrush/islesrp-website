@@ -20,6 +20,10 @@
     <h2>✅ Welcome, Admin</h2>
     <p>You can manage the site from here. (More tools coming soon)</p>
 
+    <div style="margin: 20px auto; max-width: 600px;">
+      <input id="userSearch" placeholder="🔍 Search users..." style="width: 100%; padding: 10px; font-size: 1em;" />
+    </div>
+
     <div class="admin-section">
       <h3>🎭 Manage User Roles</h3>
       <table id="userTable" class="admin-table">
@@ -28,6 +32,7 @@
             <th>Username</th>
             <th>Discord ID</th>
             <th>Role</th>
+            <th>Ban</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -35,11 +40,9 @@
     </div>
   </section>
 
-  <!-- Supabase Setup -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="assets/js/config.js"></script>
 
-  <!-- Admin Script -->
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       const status = document.getElementById("adminStatus");
@@ -47,6 +50,7 @@
 
       const { data: { session } } = await supabase.auth.getSession();
       const user = session?.user;
+      const adminId = user?.id;
 
       if (!user) {
         alert("⛔ You must be logged in to access the admin panel.");
@@ -69,24 +73,23 @@
       status.textContent = "✅ Access granted. Admin controls unlocked.";
       controls.style.display = "block";
 
-      await loadUserList();
+      await loadUserList(adminId);
     });
 
-    async function loadUserList() {
+    async function loadUserList(adminId) {
       const table = document.getElementById("userTable").querySelector("tbody");
+      const searchInput = document.getElementById("userSearch");
       table.innerHTML = "";
 
       const { data: users, error } = await supabase
         .from("users")
-        .select("id, username, discord_id, role")
+        .select("id, username, discord_id, role, banned")
         .order("joined_at", { ascending: false });
 
       if (error) {
         console.error("❌ Failed to fetch users:", error.message);
         return;
       }
-
-      console.log("✅ Loaded users:", users);
 
       users.forEach(user => {
         const row = document.createElement("tr");
@@ -95,20 +98,25 @@
           <td>${user.username}</td>
           <td>${user.discord_id}</td>
           <td>
-            <select data-user-id="${user.id}">
+            <select data-user-id="${user.id}" data-old-role="${user.role}">
               <option value="user" ${user.role === "user" ? "selected" : ""}>User</option>
               <option value="media" ${user.role === "media" ? "selected" : ""}>Media</option>
               <option value="admin" ${user.role === "admin" ? "selected" : ""}>Admin</option>
             </select>
+          </td>
+          <td>
+            <input type="checkbox" data-ban-id="${user.id}" ${user.banned ? "checked" : ""} />
           </td>
         `;
 
         table.appendChild(row);
       });
 
+      // Role change + logging
       table.querySelectorAll("select").forEach(select => {
         select.addEventListener("change", async (e) => {
           const userId = e.target.dataset.userId;
+          const oldRole = e.target.dataset.oldRole;
           const newRole = e.target.value;
 
           const { error } = await supabase
@@ -116,12 +124,47 @@
             .update({ role: newRole })
             .eq("id", userId);
 
-          if (error) {
+          if (!error) {
+            await supabase.from("role_changes").insert({
+              user_id: userId,
+              changed_by: adminId,
+              old_role: oldRole,
+              new_role: newRole,
+            });
+
+            alert("✅ Role updated & logged.");
+          } else {
             alert("❌ Failed to update role");
             console.error(error);
-          } else {
-            alert("✅ Role updated!");
           }
+        });
+      });
+
+      // Ban checkbox toggle
+      table.querySelectorAll("input[type='checkbox']").forEach(cb => {
+        cb.addEventListener("change", async (e) => {
+          const userId = e.target.dataset.banId;
+          const banned = e.target.checked;
+
+          const { error } = await supabase
+            .from("users")
+            .update({ banned })
+            .eq("id", userId);
+
+          if (!error) {
+            alert(`🚫 User ${banned ? "banned" : "unbanned"}.`);
+          } else {
+            console.error("❌ Failed to update ban status:", error.message);
+          }
+        });
+      });
+
+      // Search filter
+      searchInput.addEventListener("input", () => {
+        const query = searchInput.value.toLowerCase();
+        Array.from(table.rows).forEach(row => {
+          const match = row.innerText.toLowerCase().includes(query);
+          row.style.display = match ? "" : "none";
         });
       });
     }
