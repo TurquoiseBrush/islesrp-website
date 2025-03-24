@@ -20,8 +20,9 @@ async function fetchAndRenderPosts() {
 
   grid.innerHTML = ""; // Clear current posts
 
+  // Updated table name to 'posts' after reset
   const { data: posts, error } = await supabase
-    .from("social_media_posts")
+    .from("posts")
     .select("id, name, description, image_url")
     .order("created_at", { ascending: false });
 
@@ -195,8 +196,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       statusMsg.textContent = "Submitting...";
 
       try {
+        // Updated table name to 'posts' after reset
         const { error: insertError } = await supabase
-          .from("social_media_posts")
+          .from("posts")
           .insert({
             name,
             description: desc,
