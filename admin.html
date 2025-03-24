@@ -7,29 +7,34 @@
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body class="admin-page">
+
+  <!-- Fixed Home Button -->
   <a href="index.html" class="home-btn">🏠 Home</a>
 
   <header class="content">
     <h1>🛠️ IslesRP Admin Panel</h1>
-    <p id="adminStatus">Checking authorization...</p>
+    <p id="adminStatus">Checking access...</p>
   </header>
 
-  <section id="adminControls" style="display: none; text-align: center;">
-    <p>Welcome, Admin. You can manage content here.</p>
-    <!-- Add more controls here later -->
+  <section id="adminControls" style="display: none; text-align: center; padding: 40px 20px;">
+    <h2>✅ Welcome, Admin</h2>
+    <p>You can manage the site from here. (More tools coming soon)</p>
+    <!-- Future admin tools go here -->
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="assets/js/config.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const user = session?.user;
       const status = document.getElementById("adminStatus");
       const controls = document.getElementById("adminControls");
 
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user;
+
       if (!user) {
-        status.textContent = "❌ You must be logged in.";
+        alert("⛔ You must be logged in to access the admin panel.");
+        window.location.href = "index.html";
         return;
       }
 
@@ -39,17 +44,13 @@
         .eq("id", user.id)
         .single();
 
-      if (error || !data) {
-        status.textContent = "❌ Could not verify role.";
+      if (error || !data || data.role !== "admin") {
+        alert("🚫 Access denied. Admins only.");
+        window.location.href = "index.html";
         return;
       }
 
-      if (data.role !== "admin") {
-        status.textContent = "⛔ Access denied. Admins only.";
-        return;
-      }
-
-      status.textContent = "✅ Access granted. Welcome, Admin!";
+      status.textContent = "✅ Access granted. Admin controls unlocked.";
       controls.style.display = "block";
     });
   </script>
