@@ -687,3 +687,9 @@ body.index-page, html.index-page {
   border: 1px solid #555;
   border-radius: 4px;
 }
+.badge-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-left: 5px;
+}

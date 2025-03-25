@@ -14,12 +14,12 @@ async function syncUserProfile(session) {
   else console.log("✅ User synced");
 }
 
-// Helper to return a badge HTML based on user role
+// Updated: Return badge icon for admin and media roles
 function getBadgeForRole(role) {
   if (role === 'admin') {
-    return '<span class="badge badge-admin">Admin</span>';
+    return '<img src="assets/images/adminbadge.png" alt="Admin Badge" class="badge-icon" />';
   } else if (role === 'media') {
-    return '<span class="badge badge-media">Media</span>';
+    return '<img src="assets/images/mediateam.png" alt="Media Badge" class="badge-icon" />';
   } else {
     return ''; // No badge for regular users
   }
@@ -52,7 +52,7 @@ async function fetchAndRenderPosts() {
 
     // Use the display_name from the post; fallback to the joined user's username.
     const posterName = post.display_name || post.user?.username || "Unknown";
-    // Display a badge if the user's role is admin or media.
+    // Display a badge icon based on the user's role.
     const posterRole = post.user?.role || "";
     const roleBadge = getBadgeForRole(posterRole);
     const postTitle = post.title || "";
