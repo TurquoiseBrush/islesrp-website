@@ -17,7 +17,7 @@
   </header>
 
   <section id="adminControls" style="display: none; text-align: center; padding: 40px 20px;">
-    <h2>✅ Welcome, Admin</h2>
+    <h2>✅ Welcome, Admin / Site Dev</h2>
     <p>You can manage the site from here. (More tools coming soon)</p>
 
     <div style="margin: 20px auto; max-width: 600px;">
@@ -44,13 +44,13 @@
   <script src="assets/js/config.js"></script>
 
   <script>
-document.addEventListener("DOMContentLoaded", async () => {
-  const status = document.getElementById("adminStatus");
-  const controls = document.getElementById("adminControls");
+    document.addEventListener("DOMContentLoaded", async () => {
+      const status = document.getElementById("adminStatus");
+      const controls = document.getElementById("adminControls");
 
-  const { data: { session } } = await supabase.auth.getSession();
-  const user = session?.user;
-  const adminId = user?.id;
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user;
+      const adminId = user?.id;
 
       if (!user) {
         alert("⛔ You must be logged in to access the admin panel.");
@@ -64,8 +64,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         .eq("id", user.id)
         .single();
 
-      if (error || !data || data.role !== "admin", "site dev") {
-        alert("🚫 Access denied. Admins only.");
+      // Allow access if the user is either "admin" or "site dev"
+      if (error || !data || (data.role !== "admin" && data.role !== "site dev")) {
+        alert("🚫 Access denied. Admins and Site Devs only.");
         window.location.href = "index.html";
         return;
       }
@@ -75,7 +76,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       await loadUserList(adminId);
     });
-
 
     async function loadUserList(adminId) {
       const table = document.getElementById("userTable").querySelector("tbody");
@@ -103,6 +103,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               <option value="user" ${user.role === "user" ? "selected" : ""}>User</option>
               <option value="media" ${user.role === "media" ? "selected" : ""}>Media</option>
               <option value="admin" ${user.role === "admin" ? "selected" : ""}>Admin</option>
+              <option value="site dev" ${user.role === "site dev" ? "selected" : ""}>Site Dev</option>
             </select>
           </td>
           <td>
