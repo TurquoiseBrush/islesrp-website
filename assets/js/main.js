@@ -52,9 +52,14 @@ async function fetchAndRenderPosts() {
 
     // Use the display_name from the post; fallback to the joined user's username.
     const posterName = post.display_name || post.user?.username || "Unknown";
-    // Display a badge icon based on the user's role.
-    const posterRole = post.user?.role || "";
-    const roleBadge = getBadgeForRole(posterRole);
+    let roleBadge = "";
+    
+    if (posterName.toUpperCase() === "ADMIN") {
+      roleBadge = getBadgeForRole("admin");
+    } else if (posterName.toUpperCase() === "NEWS") {
+      roleBadge = getBadgeForRole("media");
+    }
+    
     const postTitle = post.title || "";
     const postDescription = post.description || "";
 
