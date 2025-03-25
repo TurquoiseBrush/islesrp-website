@@ -54,6 +54,8 @@ async function fetchAndRenderPosts() {
       roleSuffix = " (ADMIN 👑)";
     } else if (userRole === "media") {
       roleSuffix = " (MEDIA TEAM 📸)";
+    } else if (userRole.toLowerCase() === "site dev") { // or use strict "Site Dev" if you want to be case-sensitive
+      roleSuffix = " (SITE DEV 🛠️)";
     }
 
 
@@ -128,7 +130,7 @@ async function populateDisplayNameSelect() {
   const role = userData.role;
   console.log("User role:", role);
 
-  // Add extra option for admin or media regardless of characters
+  // Add extra option based on role
   if (role === "admin") {
     const option = document.createElement("option");
     option.value = "ADMIN";
@@ -139,7 +141,13 @@ async function populateDisplayNameSelect() {
     option.value = "NEWS";
     option.textContent = "NEWS";
     displaySelect.appendChild(option);
+  } else if (role.toLowerCase() === "site dev") {
+    const option = document.createElement("option");
+    option.value = "SITE DEV";
+    option.textContent = "SITE DEV";
+    displaySelect.appendChild(option);
   }
+
 }
 
 /* ================= Character Management Functions ================= */
