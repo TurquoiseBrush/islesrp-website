@@ -44,13 +44,13 @@
   <script src="assets/js/config.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const status = document.getElementById("adminStatus");
-      const controls = document.getElementById("adminControls");
+document.addEventListener("DOMContentLoaded", async () => {
+  const status = document.getElementById("adminStatus");
+  const controls = document.getElementById("adminControls");
 
-      const { data: { session } } = await supabase.auth.getSession();
-      const user = session?.user;
-      const adminId = user?.id;
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  const adminId = user?.id;
 
       if (!user) {
         alert("⛔ You must be logged in to access the admin panel.");
@@ -75,6 +75,7 @@
 
       await loadUserList(adminId);
     });
+
 
     async function loadUserList(adminId) {
       const table = document.getElementById("userTable").querySelector("tbody");
