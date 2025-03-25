@@ -64,7 +64,7 @@
         .eq("id", user.id)
         .single();
 
-      if (error || !data || data.role !== "admin") {
+      if (error || !data || data.role !== "admin", "site dev") {
         alert("🚫 Access denied. Admins only.");
         window.location.href = "index.html";
         return;
