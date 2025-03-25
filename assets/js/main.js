@@ -377,9 +377,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     openSubmitModalBtn.addEventListener("click", async () => {
       submitModal.style.display = "flex";
       requestAnimationFrame(() => submitModal.classList.add("show"));
-      // Populate the display name select dropdown when opening the modal
+      // Populate the display name dropdown when opening the modal
       await populateDisplayNameSelect();
     });
+    
 
     window.closeSubmitModal = () => {
       submitModal.classList.remove("show");
