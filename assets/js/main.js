@@ -53,7 +53,7 @@ async function fetchAndRenderPosts() {
     if (userRole === "admin") {
       roleSuffix = " (ADMIN 👑)";
     } else if (userRole === "media") {
-      roleSuffix = " (NEWS 📸)";
+      roleSuffix = " (MEDIA TEAM 📸)";
     }
 
 
