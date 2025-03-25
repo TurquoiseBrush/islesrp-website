@@ -53,7 +53,7 @@ async function fetchAndRenderPosts() {
     const posterName = post.user?.username || "Unknown";
     const posterRole = post.user?.role || "";
     const roleBadge = getBadgeForRole(posterRole);
-    const postTitle = post.title || ""; // post title
+    const postTitle = post.title || "";
     const postDescription = post.description || "";
 
     postDiv.innerHTML = `
@@ -202,10 +202,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     postForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // The form now has three fields:
-      // - "postTitle" for the post title (to appear below the image)
-      // - "postDescription" for the description
-      // - "postImageUrl" for the image link
       const title = document.getElementById("postTitle")?.value.trim();
       const desc = document.getElementById("postDescription")?.value.trim();
       const imageUrl = document.getElementById("postImageUrl")?.value.trim();
@@ -232,7 +228,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             description: desc,
             image_url: imageUrl,
             user_id: user?.id
-            // The poster's name is retrieved via join from the users table.
           });
 
         if (insertError) throw insertError;
