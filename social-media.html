@@ -68,13 +68,15 @@
       <h3>📸 Submit a Social Post</h3>
 
       <form id="postForm">
-        <!-- New post title field -->
         <input type="text" id="postTitle" placeholder="Post Title" required />
-        <textarea id="postDescription" placeholder="Post Description (max 200 characters)" maxlength="200" required></textarea>
+        <textarea id="postDescription" placeholder="Post Description" maxlength="200" required></textarea>
         <input type="url" id="postImageUrl" placeholder="Image URL" required />
-        <button type="submit" class="btn instagram-btn">Submit Post</button>
-        <p id="submissionStatus" style="margin-top: 10px;"></p>
+        <!-- New dropdown for selecting display name -->
+        <select id="displayNameSelect" required></select>
+        <button type="submit" class="btn">Submit Post</button>
+        <p id="submissionStatus"></p>
       </form>
+      
     </div>
   </div>
 
