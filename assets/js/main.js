@@ -47,20 +47,22 @@ async function fetchAndRenderPosts() {
     postDiv.style = `--fade-delay: ${0.3 + i * 0.1}s`;
 
     const displayName = post.display_name || post.user?.username || "Unknown";
+    const userRole = post.user?.role || "";
     let roleSuffix = "";
 
-    if (displayName.toUpperCase() === "ADMIN") {
-      roleSuffix = " 👑";
-    } else if (displayName.toUpperCase() === "NEWS") {
-      roleSuffix = " 📸";
+    if (userRole === "admin") {
+      roleSuffix = " (ADMIN 👑)";
+    } else if (userRole === "media") {
+      roleSuffix = " (NEWS 📸)";
     }
+
 
     const postTitle = post.title || "";
     const postDescription = post.description || "";
 
     postDiv.innerHTML = `
       <div class="poster-info">
-        <span class="poster-name">${displayName} (${displayName.toUpperCase()}${roleSuffix})</span>
+        <span class="poster-name">${displayName}${roleSuffix}</span>
       </div>
       <img src="${post.image_url}" alt="${postTitle}" onclick="openModal('${post.image_url}', '${postTitle}', \`${postDescription}\`)" style="cursor: pointer;" />
       <div class="post-details">
