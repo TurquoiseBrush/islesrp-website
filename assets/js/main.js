@@ -70,6 +70,136 @@ async function fetchAndRenderPosts() {
   });
 }
 
+/* ================= Character Management Functions ================= */
+
+// Fetch characters for a user
+async function fetchUserCharacters(userId) {
+  const { data, error } = await supabase
+    .from('characters')
+    .select('*')
+    .eq('user_id', userId);
+  if (error) {
+    console.error("❌ Failed to fetch characters:", error.message);
+    return [];
+  }
+  return data;
+}
+
+// Add a new character for a user
+async function addCharacter(userId, characterName) {
+  const { data, error } = await supabase
+    .from('characters')
+    .insert({ user_id: userId, character_name: characterName });
+  if (error) {
+    console.error("❌ Failed to add character:", error.message);
+    return null;
+  }
+  return data;
+}
+
+// Update a character's name
+async function updateCharacter(characterId, newName) {
+  const { data, error } = await supabase
+    .from('characters')
+    .update({ character_name: newName })
+    .eq('id', characterId);
+  if (error) {
+    console.error("❌ Failed to update character:", error.message);
+    return null;
+  }
+  return data;
+}
+
+// Delete a character
+async function deleteCharacter(characterId) {
+  const { data, error } = await supabase
+    .from('characters')
+    .delete()
+    .eq('id', characterId);
+  if (error) {
+    console.error("❌ Failed to delete character:", error.message);
+    return null;
+  }
+  return data;
+}
+
+// Render character list in the character management modal
+function renderCharacterList(characters) {
+  const characterList = document.getElementById("characterList");
+  if (!characterList) return;
+  characterList.innerHTML = "";
+
+  if (characters.length === 0) {
+    characterList.innerHTML = "<p>No characters added yet.</p>";
+    return;
+  }
+
+  characters.forEach((char) => {
+    const charDiv = document.createElement("div");
+    charDiv.className = "character-item";
+    charDiv.innerHTML = `
+      <span class="character-name">${char.character_name}</span>
+      <button class="btn edit-char" data-id="${char.id}">Edit</button>
+      <button class="btn delete-char" data-id="${char.id}">Delete</button>
+    `;
+    characterList.appendChild(charDiv);
+  });
+
+  // Add event listeners for edit and delete buttons
+  document.querySelectorAll(".edit-char").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const charId = e.target.getAttribute("data-id");
+      const currentName = e.target.parentElement.querySelector(".character-name").textContent;
+      const newName = prompt("Enter new name:", currentName);
+      if (newName && newName.trim() !== "") {
+        await updateCharacter(charId, newName.trim());
+        loadAndRenderCharacters();
+      }
+    });
+  });
+
+  document.querySelectorAll(".delete-char").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const charId = e.target.getAttribute("data-id");
+      if (confirm("Are you sure you want to delete this character?")) {
+        await deleteCharacter(charId);
+        loadAndRenderCharacters();
+      }
+    });
+  });
+}
+
+// Load characters for the current user and render them
+async function loadAndRenderCharacters() {
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) return;
+  const characters = await fetchUserCharacters(user.id);
+  renderCharacterList(characters);
+}
+
+// Modal open/close handlers for character management
+function openCharacterModal() {
+  const characterModal = document.getElementById("characterModal");
+  if (!characterModal) return;
+  characterModal.style.display = "flex";
+  requestAnimationFrame(() => characterModal.classList.add("show"));
+  document.documentElement.style.overflow = "hidden";
+  loadAndRenderCharacters();
+}
+
+function closeCharacterModal() {
+  const characterModal = document.getElementById("characterModal");
+  if (!characterModal) return;
+  characterModal.classList.remove("show");
+  setTimeout(() => {
+    characterModal.style.display = "none";
+    document.documentElement.style.overflow = "auto";
+  }, 200);
+}
+
+/* ================= End Character Management Functions ================= */
+
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("✅ main.js loaded");
 
@@ -145,7 +275,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await fetchAndRenderPosts();
 
-  // Modal viewer
+  // Modal viewer for images
   if (modal && modalImg && modalTitle && modalDescription && closeModalButton) {
     window.openModal = (imgSrc, title, description) => {
       if (!imgSrc) return;
@@ -239,6 +369,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("❌ Upload failed:", err);
         statusMsg.textContent = "❌ Upload failed. Please try again.";
       }
+    });
+  }
+
+  /* ========== Character Management Setup ========== */
+  // Button to open the Manage Characters modal
+  const openCharacterModalBtn = document.getElementById("openCharacterModal");
+  if (openCharacterModalBtn) {
+    openCharacterModalBtn.addEventListener("click", openCharacterModal);
+  }
+
+  // Handle the character form submission (to add a new character)
+  const characterForm = document.getElementById("characterForm");
+  if (characterForm) {
+    characterForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const newCharName = document.getElementById("newCharacterName")?.value.trim();
+      if (!newCharName) {
+        alert("Please enter a character name.");
+        return;
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      const currentUser = session?.user;
+      if (!currentUser) {
+        alert("You must be logged in to add a character.");
+        return;
+      }
+      await addCharacter(currentUser.id, newCharName);
+      document.getElementById("newCharacterName").value = "";
+      loadAndRenderCharacters();
     });
   }
 });
