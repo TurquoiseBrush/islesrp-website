@@ -41,6 +41,8 @@ async function fetchAndRenderPosts() {
     console.error("❌ Failed to fetch posts:", error.message);
     return;
   }
+  
+  console.log("✅ Fetched posts:", posts);
 
   posts.forEach((post, i) => {
     const postDiv = document.createElement("div");
@@ -108,6 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const meta = user?.user_metadata;
   const username = meta?.full_name || meta?.name || "Unknown";
 
+  console.log("✅ Session:", session);
   if (session) await syncUserProfile(session);
 
   if (user) {
@@ -199,13 +202,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     postForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // The form should now have three fields:
+      // The form now has three fields:
       // - "postTitle" for the post title (to appear below the image)
       // - "postDescription" for the description
       // - "postImageUrl" for the image link
       const title = document.getElementById("postTitle")?.value.trim();
       const desc = document.getElementById("postDescription")?.value.trim();
       const imageUrl = document.getElementById("postImageUrl")?.value.trim();
+
+      console.log("Submitting post:", { title, desc, imageUrl, user_id: user?.id });
 
       if (!title || !desc || !imageUrl) {
         statusMsg.textContent = "Please fill out all fields.";
@@ -227,7 +232,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             description: desc,
             image_url: imageUrl,
             user_id: user?.id
-            // Notice we are not inserting into "name" because that value is obtained via the join from the users table.
+            // The poster's name is retrieved via join from the users table.
           });
 
         if (insertError) throw insertError;
