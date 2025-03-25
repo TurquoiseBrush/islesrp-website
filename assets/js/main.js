@@ -31,10 +31,11 @@ async function fetchAndRenderPosts() {
 
   grid.innerHTML = ""; // Clear current posts
 
-  // Query posts with a join to fetch the posting user's username and role
+  // Query posts with a join to fetch the posting user's username and role,
+  // and also include the display_name stored in the posts table.
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("id, title, description, image_url, created_at, user:users(username, role)")
+    .select("id, title, description, image_url, created_at, display_name, user:users(username, role)")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -49,8 +50,9 @@ async function fetchAndRenderPosts() {
     postDiv.className = "post";
     postDiv.style = `--fade-delay: ${0.3 + i * 0.1}s`;
 
-    // Get the poster's info from the joined users data
-    const posterName = post.user?.username || "Unknown";
+    // Use the display_name from the post; fallback to the joined user's username.
+    const posterName = post.display_name || post.user?.username || "Unknown";
+    // We can also display a badge if the user's role is admin or media.
     const posterRole = post.user?.role || "";
     const roleBadge = getBadgeForRole(posterRole);
     const postTitle = post.title || "";
@@ -68,6 +70,68 @@ async function fetchAndRenderPosts() {
     `;
     grid.appendChild(postDiv);
   });
+}
+
+// ===== New: Populate Display Name Select ===== //
+async function populateDisplayNameSelect() {
+  const displaySelect = document.getElementById("displayNameSelect");
+  if (!displaySelect) return;
+  displaySelect.innerHTML = ""; // Clear previous options
+
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) return;
+
+  // Fetch user role from the custom users table
+  const { data: userData, error: roleError } = await supabase
+    .from("users")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if (roleError) {
+    console.warn("Could not fetch user role:", roleError.message);
+    return;
+  }
+  const role = userData.role;
+
+  if (role === "admin") {
+    // Only allow "ADMIN"
+    const option = document.createElement("option");
+    option.value = "ADMIN";
+    option.textContent = "ADMIN";
+    displaySelect.appendChild(option);
+  } else if (role === "media") {
+    // Only allow "NEWS"
+    const option = document.createElement("option");
+    option.value = "NEWS";
+    option.textContent = "NEWS";
+    displaySelect.appendChild(option);
+  } else {
+    // For regular users: fetch their characters from the characters table
+    const { data: characters, error } = await supabase
+      .from("characters")
+      .select("character_name")
+      .eq("user_id", user.id);
+    if (error) {
+      console.error("Failed to fetch characters:", error.message);
+      return;
+    }
+    if (characters.length === 0) {
+      // If no characters exist, add a disabled default option
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = "No characters found";
+      option.disabled = true;
+      displaySelect.appendChild(option);
+    } else {
+      characters.forEach(char => {
+        const option = document.createElement("option");
+        option.value = char.character_name;
+        option.textContent = char.character_name;
+        displaySelect.appendChild(option);
+      });
+    }
+  }
 }
 
 /* ================= Character Management Functions ================= */
@@ -310,9 +374,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Submit post
   if (submitModal && openSubmitModalBtn && postForm && statusMsg && closeSubmitBtn) {
-    openSubmitModalBtn.addEventListener("click", () => {
+    openSubmitModalBtn.addEventListener("click", async () => {
       submitModal.style.display = "flex";
       requestAnimationFrame(() => submitModal.classList.add("show"));
+      // Populate the display name select dropdown when opening the modal
+      await populateDisplayNameSelect();
     });
 
     window.closeSubmitModal = () => {
@@ -335,10 +401,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       const title = document.getElementById("postTitle")?.value.trim();
       const desc = document.getElementById("postDescription")?.value.trim();
       const imageUrl = document.getElementById("postImageUrl")?.value.trim();
+      const displayName = document.getElementById("displayNameSelect")?.value.trim();
 
-      console.log("Submitting post:", { title, desc, imageUrl, user_id: user?.id });
+      console.log("Submitting post:", { title, desc, imageUrl, displayName, user_id: user?.id });
 
-      if (!title || !desc || !imageUrl) {
+      if (!title || !desc || !imageUrl || !displayName) {
         statusMsg.textContent = "Please fill out all fields.";
         return;
       }
@@ -357,7 +424,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             title,
             description: desc,
             image_url: imageUrl,
-            user_id: user?.id
+            user_id: user?.id,
+            display_name: displayName
           });
 
         if (insertError) throw insertError;
@@ -372,14 +440,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  /* ========== Character Management Setup ========== */
-  // Button to open the Manage Characters modal
+  /* ========== Character Management Setup (as before) ========== */
   const openCharacterModalBtn = document.getElementById("openCharacterModal");
   if (openCharacterModalBtn) {
     openCharacterModalBtn.addEventListener("click", openCharacterModal);
   }
 
-  // Handle the character form submission (to add a new character)
   const characterForm = document.getElementById("characterForm");
   if (characterForm) {
     characterForm.addEventListener("submit", async (e) => {
