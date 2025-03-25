@@ -341,7 +341,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (banned) {
         openSubmitModalBtn?.remove();
         console.warn("🚫 You are banned from posting.");
-      } else if (["admin", "media"].includes(role)) {
+      } else if (["admin", "media", "user", "site dev"].includes(role)) {
         openSubmitModalBtn.style.display = "inline-block";
       } else {
         openSubmitModalBtn.style.display = "none";
