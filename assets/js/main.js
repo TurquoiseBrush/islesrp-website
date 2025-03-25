@@ -52,7 +52,7 @@ async function fetchAndRenderPosts() {
 
     // Use the display_name from the post; fallback to the joined user's username.
     const posterName = post.display_name || post.user?.username || "Unknown";
-    // We can also display a badge if the user's role is admin or media.
+    // Display a badge if the user's role is admin or media.
     const posterRole = post.user?.role || "";
     const roleBadge = getBadgeForRole(posterRole);
     const postTitle = post.title || "";
@@ -72,17 +72,47 @@ async function fetchAndRenderPosts() {
   });
 }
 
-// ===== New: Populate Display Name Select ===== //
+// ===== Updated: Populate Display Name Select ===== //
 async function populateDisplayNameSelect() {
   const displaySelect = document.getElementById("displayNameSelect");
-  if (!displaySelect) return;
+  if (!displaySelect) {
+    console.error("No displayNameSelect element found.");
+    return;
+  }
   displaySelect.innerHTML = ""; // Clear previous options
 
   const { data: { session } } = await supabase.auth.getSession();
   const user = session?.user;
-  if (!user) return;
+  if (!user) {
+    console.error("No user session found.");
+    return;
+  }
 
-  // Fetch user role from the custom users table
+  // Always fetch characters for the user
+  const { data: characters, error: charError } = await supabase
+    .from("characters")
+    .select("character_name")
+    .eq("user_id", user.id);
+  if (charError) {
+    console.error("Failed to fetch characters:", charError.message);
+  }
+
+  if (characters && characters.length > 0) {
+    characters.forEach(char => {
+      const option = document.createElement("option");
+      option.value = char.character_name;
+      option.textContent = char.character_name;
+      displaySelect.appendChild(option);
+    });
+  } else {
+    // If no characters exist, add a default option (non-disabled so it can be selected)
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = "No characters found";
+    displaySelect.appendChild(option);
+  }
+
+  // Fetch user role from the custom users table and add extra option if admin or media.
   const { data: userData, error: roleError } = await supabase
     .from("users")
     .select("role")
@@ -93,44 +123,19 @@ async function populateDisplayNameSelect() {
     return;
   }
   const role = userData.role;
+  console.log("User role:", role);
 
+  // Add extra option for admin or media regardless of characters
   if (role === "admin") {
-    // Only allow "ADMIN"
     const option = document.createElement("option");
     option.value = "ADMIN";
     option.textContent = "ADMIN";
     displaySelect.appendChild(option);
   } else if (role === "media") {
-    // Only allow "NEWS"
     const option = document.createElement("option");
     option.value = "NEWS";
     option.textContent = "NEWS";
     displaySelect.appendChild(option);
-  } else {
-    // For regular users: fetch their characters from the characters table
-    const { data: characters, error } = await supabase
-      .from("characters")
-      .select("character_name")
-      .eq("user_id", user.id);
-    if (error) {
-      console.error("Failed to fetch characters:", error.message);
-      return;
-    }
-    if (characters.length === 0) {
-      // If no characters exist, add a disabled default option
-      const option = document.createElement("option");
-      option.value = "";
-      option.textContent = "No characters found";
-      option.disabled = true;
-      displaySelect.appendChild(option);
-    } else {
-      characters.forEach(char => {
-        const option = document.createElement("option");
-        option.value = char.character_name;
-        option.textContent = char.character_name;
-        displaySelect.appendChild(option);
-      });
-    }
   }
 }
 
@@ -381,7 +386,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       await populateDisplayNameSelect();
     });
     
-
     window.closeSubmitModal = () => {
       submitModal.classList.remove("show");
       setTimeout(() => {
@@ -441,7 +445,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  /* ========== Character Management Setup (as before) ========== */
+  /* ========== Character Management Setup ========== */
   const openCharacterModalBtn = document.getElementById("openCharacterModal");
   if (openCharacterModalBtn) {
     openCharacterModalBtn.addEventListener("click", openCharacterModal);
