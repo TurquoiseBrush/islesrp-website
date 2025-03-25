@@ -29,10 +29,8 @@ async function fetchAndRenderPosts() {
   const grid = document.querySelector(".posts-grid");
   if (!grid) return;
 
-  grid.innerHTML = ""; // Clear current posts
+  grid.innerHTML = "";
 
-  // Query posts with a join to fetch the posting user's username and role,
-  // and also include the display_name stored in the posts table.
   const { data: posts, error } = await supabase
     .from("posts")
     .select("id, title, description, image_url, created_at, display_name, user:users(username, role)")
@@ -42,30 +40,27 @@ async function fetchAndRenderPosts() {
     console.error("❌ Failed to fetch posts:", error.message);
     return;
   }
-  
-  console.log("✅ Fetched posts:", posts);
 
   posts.forEach((post, i) => {
     const postDiv = document.createElement("div");
     postDiv.className = "post";
     postDiv.style = `--fade-delay: ${0.3 + i * 0.1}s`;
 
-    // Use the display_name from the post; fallback to the joined user's username.
-    const posterName = post.display_name || post.user?.username || "Unknown";
-    let roleBadge = "";
-    
-    if (posterName.toUpperCase() === "ADMIN") {
-      roleBadge = getBadgeForRole("admin");
-    } else if (posterName.toUpperCase() === "NEWS") {
-      roleBadge = getBadgeForRole("media");
+    const displayName = post.display_name || post.user?.username || "Unknown";
+    let roleSuffix = "";
+
+    if (displayName.toUpperCase() === "ADMIN") {
+      roleSuffix = " 👑";
+    } else if (displayName.toUpperCase() === "NEWS") {
+      roleSuffix = " 📸";
     }
-    
+
     const postTitle = post.title || "";
     const postDescription = post.description || "";
 
     postDiv.innerHTML = `
       <div class="poster-info">
-        <span class="poster-name">${posterName}</span> ${roleBadge}
+        <span class="poster-name">${displayName} (${displayName.toUpperCase()}${roleSuffix})</span>
       </div>
       <img src="${post.image_url}" alt="${postTitle}" onclick="openModal('${post.image_url}', '${postTitle}', \`${postDescription}\`)" style="cursor: pointer;" />
       <div class="post-details">
@@ -76,6 +71,7 @@ async function fetchAndRenderPosts() {
     grid.appendChild(postDiv);
   });
 }
+
 
 // ===== Updated: Populate Display Name Select ===== //
 async function populateDisplayNameSelect() {

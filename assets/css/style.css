@@ -693,3 +693,10 @@ body.index-page, html.index-page {
   vertical-align: middle;
   margin-left: 5px;
 }
+.poster-name {
+  font-weight: bold;
+}
+
+.poster-name::after {
+  margin-left: 4px;
+}
