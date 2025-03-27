@@ -14,16 +14,6 @@ async function syncUserProfile(session) {
   else console.log("✅ User synced");
 }
 
-// Updated: Return badge icon for admin and media roles
-function getBadgeForRole(role) {
-  if (role === 'admin') {
-    return '<img src="assets/images/adminbadge.png" alt="Admin Badge" class="badge-icon" />';
-  } else if (role === 'media') {
-    return '<img src="assets/images/mediateam.png" alt="Media Badge" class="badge-icon" />';
-  } else {
-    return ''; // No badge for regular users
-  }
-}
 
 async function fetchAndRenderPosts() {
   const grid = document.querySelector(".posts-grid");
