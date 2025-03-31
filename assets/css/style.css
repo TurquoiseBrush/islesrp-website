@@ -700,3 +700,19 @@ body.index-page, html.index-page {
 .poster-name::after {
   margin-left: 4px;
 }
+
+/*------------Current Song---------*/
+.now-playing {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  color: #fff;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#visualizer {
+  background: transparent;
+}

@@ -46,6 +46,10 @@
     <button id="muteToggle">🔇</button>
     <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.3">
   </div>
+  <div class="now-playing">
+    🎶 Now Playing: <span id="currentSong">Loading...</span>
+    <canvas id="visualizer" width="200" height="30"></canvas>
+  </div>  
   
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -54,34 +58,77 @@
         "assets/music/song2.mp3",
         "assets/music/song3.mp3"
       ];
+      const songNames = [
+        "Neon Horizon – TurquoiseBrush",
+        "City of Kings – Hauntrix",
+        "Never Again – Wolfy Grande + TurquoiseBrush"
+      ];
       let currentTrack = Math.floor(Math.random() * playlist.length);
+  
       const audio = document.getElementById("backgroundMusic");
       const playPauseBtn = document.getElementById("playPause");
       const muteToggle = document.getElementById("muteToggle");
       const volumeSlider = document.getElementById("volumeSlider");
-
-      // Load & Play Song
+      const nowPlaying = document.createElement("div");
+      nowPlaying.className = "now-playing";
+      nowPlaying.innerHTML = `🎶 Now Playing: <span id="currentSong">Loading...</span> <canvas id="visualizer" width="200" height="30"></canvas>`;
+      document.body.appendChild(nowPlaying);
+  
+      const songTitle = document.getElementById("currentSong");
+      const canvas = document.getElementById("visualizer");
+      const ctx = canvas.getContext("2d");
+      let audioCtx, analyser, source, dataArray;
+  
       function loadTrack(index) {
         audio.src = playlist[index];
+        updateNowPlaying(index);
         audio.play().then(() => {
           playPauseBtn.innerText = "⏸️";
         }).catch(err => console.log("Autoplay prevented:", err));
       }
-
-      // Initialize audio
+  
+      function updateNowPlaying(index) {
+        songTitle.textContent = songNames[index];
+      }
+  
+      function setupVisualizer() {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        source = audioCtx.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        analyser.fftSize = 32;
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+  
+        function draw() {
+          requestAnimationFrame(draw);
+          analyser.getByteFrequencyData(dataArray);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          dataArray.forEach((value, i) => {
+            const barHeight = value / 2;
+            ctx.fillStyle = "#00ffff";
+            ctx.fillRect(i * 10, canvas.height - barHeight, 8, barHeight);
+          });
+        }
+        draw();
+      }
+  
+      // Initialize
       loadTrack(currentTrack);
       audio.volume = 0.3;
-
-      // Track end - Play next
+  
+      audio.addEventListener("play", () => {
+        if (!audioCtx) setupVisualizer();
+      });
+  
       audio.addEventListener("ended", () => {
         currentTrack = (currentTrack + 1) % playlist.length;
         loadTrack(currentTrack);
       });
-
-      // Button Actions
+  
       document.querySelector(".music-controls").addEventListener("click", (event) => {
         const { id } = event.target;
-
+  
         if (id === "prevTrack") {
           currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
           loadTrack(currentTrack);
@@ -101,13 +148,13 @@
           muteToggle.innerText = audio.muted ? "🔊" : "🔇";
         }
       });
-
-      // Volume Control
+  
       volumeSlider.addEventListener("input", (event) => {
         audio.volume = event.target.value;
       });
     });
   </script>
+  
 <script>
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN') {
