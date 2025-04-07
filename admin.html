@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin Panel - IslesRP</title>
   <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    /* Optional admin table styling */
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .admin-table th, .admin-table td {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: left;
+    }
+    .admin-table th {
+      background-color: #333;
+      color: #fff;
+    }
+  </style>
 </head>
 <body class="admin-page">
 
@@ -16,6 +32,7 @@
     <p id="adminStatus">Checking access...</p>
   </header>
 
+  <!-- Admin Controls: User management -->
   <section id="adminControls" style="display: none; text-align: center; padding: 40px 20px;">
     <h2>✅ Welcome, Admin / Site Dev</h2>
     <p>You can manage the site from here. (More tools coming soon)</p>
@@ -33,6 +50,22 @@
             <th>Discord ID</th>
             <th>Role</th>
             <th>Ban</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- New: Manage Posts Section -->
+    <div class="admin-section" style="margin-top: 40px;">
+      <h3>📌 Manage Posts</h3>
+      <table id="postsTable" class="admin-table">
+        <thead>
+          <tr>
+            <th>Post Title</th>
+            <th>Display Name</th>
+            <th>Created At</th>
+            <th>Pinned</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -75,6 +108,7 @@
       controls.style.display = "block";
 
       await loadUserList(adminId);
+      await loadPostsList(); // Load posts list for managing pinned status
     });
 
     async function loadUserList(adminId) {
@@ -114,7 +148,7 @@
         table.appendChild(row);
       });
 
-      // Role change + logging
+      // Handle role updates
       table.querySelectorAll("select").forEach(select => {
         select.addEventListener("change", async (e) => {
           const userId = e.target.dataset.userId;
@@ -133,7 +167,6 @@
               old_role: oldRole,
               new_role: newRole,
             });
-
             alert("✅ Role updated & logged.");
           } else {
             alert("❌ Failed to update role");
@@ -142,7 +175,7 @@
         });
       });
 
-      // Ban checkbox toggle
+      // Handle ban toggle
       table.querySelectorAll("input[type='checkbox']").forEach(cb => {
         cb.addEventListener("change", async (e) => {
           const userId = e.target.dataset.banId;
@@ -161,12 +194,65 @@
         });
       });
 
-      // Search filter
+      // Search filter for the users table
       searchInput.addEventListener("input", () => {
         const query = searchInput.value.toLowerCase();
         Array.from(table.rows).forEach(row => {
           const match = row.innerText.toLowerCase().includes(query);
           row.style.display = match ? "" : "none";
+        });
+      });
+    }
+
+    // New function: Load posts and allow updating pinned status
+    async function loadPostsList() {
+      const postsTable = document.getElementById("postsTable").querySelector("tbody");
+      postsTable.innerHTML = "";
+
+      const { data: posts, error } = await supabase
+        .from("posts")
+        .select("id, title, display_name, created_at, isPinned")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("❌ Failed to fetch posts:", error.message);
+        return;
+      }
+
+      posts.forEach(post => {
+        const row = document.createElement("tr");
+
+        // Format the creation date nicely
+        const createdAt = new Date(post.created_at).toLocaleString();
+
+        row.innerHTML = `
+          <td>${post.title}</td>
+          <td>${post.display_name || "Unknown"}</td>
+          <td>${createdAt}</td>
+          <td>
+            <input type="checkbox" data-post-id="${post.id}" ${post.isPinned ? "checked" : ""} />
+          </td>
+        `;
+        postsTable.appendChild(row);
+      });
+
+      // Add event listeners to update pinned status when toggled
+      postsTable.querySelectorAll("input[type='checkbox']").forEach(cb => {
+        cb.addEventListener("change", async (e) => {
+          const postId = e.target.dataset.postId;
+          const newPinnedStatus = e.target.checked;
+
+          const { error } = await supabase
+            .from("posts")
+            .update({ isPinned: newPinnedStatus })
+            .eq("id", postId);
+
+          if (!error) {
+            alert("✅ Post pinned status updated.");
+          } else {
+            alert("❌ Failed to update pinned status: " + error.message);
+            console.error(error);
+          }
         });
       });
     }
