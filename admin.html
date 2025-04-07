@@ -211,7 +211,7 @@
 
       const { data: posts, error } = await supabase
         .from("posts")
-        .select("id, title, display_name, created_at, isPinned")
+        .select("id, title, display_name, created_at, ispinned")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -230,7 +230,7 @@
           <td>${post.display_name || "Unknown"}</td>
           <td>${createdAt}</td>
           <td>
-            <input type="checkbox" data-post-id="${post.id}" ${post.isPinned ? "checked" : ""} />
+            <input type="checkbox" data-post-id="${post.id}" ${post.ispinned ? "checked" : ""} />
           </td>
         `;
         postsTable.appendChild(row);
@@ -244,7 +244,7 @@
 
           const { error } = await supabase
             .from("posts")
-            .update({ isPinned: newPinnedStatus })
+            .update({ ispinned: newPinnedStatus })
             .eq("id", postId);
 
           if (!error) {
