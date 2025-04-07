@@ -21,11 +21,11 @@ async function fetchAndRenderPosts() {
 
   grid.innerHTML = "";
 
-  // Include "isPinned" and order so that pinned posts show up at the top
+  // Include "ispinned" and order so that pinned posts show up at the top
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("id, title, description, image_url, created_at, display_name, isPinned, user:users(username, role)")
-    .order("isPinned", { ascending: false })  // Pinned posts first (TRUE sorts above FALSE)
+    .select("id, title, description, image_url, created_at, display_name, ispinned, user:users(username, role)")
+    .order("ispinned", { ascending: false })  // Pinned posts first (TRUE sorts above FALSE)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -39,7 +39,7 @@ async function fetchAndRenderPosts() {
     postDiv.style = `--fade-delay: ${0.3 + i * 0.1}s`;
 
     // Check if this post is pinned
-    if (post.isPinned) {
+    if (post.ispinned) {
       postDiv.classList.add("pinned");
       // Optionally, add a pinned icon. You might position it with CSS.
       postDiv.innerHTML += `<span class="pin-icon">📌</span>`;
