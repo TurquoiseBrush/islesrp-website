@@ -702,18 +702,26 @@ body.index-page, html.index-page {
 }
 
 .post.pinned {
-  border: 2px solid #FFAA00;  /* A gold/orange border */
-  background-color: #FFF7E6;  /* A light background */
-  position: relative;         /* This could help if you want to position a pin icon */
+  /* Use a dark-gray background to distinguish pinned posts from the black base */
+  background-color: #1e1e1e;  
+  /* Add a bold gold border */
+  border: 2px solid #FFD700; 
+  /* Add a subtle glowing effect to make it pop */
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);  
+  /* Ensure padding/margin adjustments if needed for a balanced look */
+  padding: 10px;
+  position: relative;
 }
 
-/* Optional: Style the pin icon inside pinned posts */
+/* Optional: Style for the pin icon to match the accent */
 .pin-icon {
   position: absolute;
   top: 8px;
   right: 8px;
-  font-size: 1.2em;
+  font-size: 1.5em;
+  color: #FFD700;
 }
+
 
 /*------------Current Song---------*/
 .now-playing-box {
