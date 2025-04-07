@@ -31,9 +31,11 @@ async function fetchAndRenderPosts() {
 
   grid.innerHTML = "";
 
+  // Include "isPinned" and order so that pinned posts show up at the top
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("id, title, description, image_url, created_at, display_name, user:users(username, role)")
+    .select("id, title, description, image_url, created_at, display_name, isPinned, user:users(username, role)")
+    .order("isPinned", { ascending: false })  // Pinned posts first (TRUE sorts above FALSE)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -46,23 +48,28 @@ async function fetchAndRenderPosts() {
     postDiv.className = "post";
     postDiv.style = `--fade-delay: ${0.3 + i * 0.1}s`;
 
+    // Check if this post is pinned
+    if (post.isPinned) {
+      postDiv.classList.add("pinned");
+      // Optionally, add a pinned icon. You might position it with CSS.
+      postDiv.innerHTML += `<span class="pin-icon">📌</span>`;
+    }
+
     const displayName = post.display_name || post.user?.username || "Unknown";
     const userRole = post.user?.role || "";
     let roleSuffix = "";
-
     if (userRole === "admin") {
       roleSuffix = " (ADMIN 👑)";
     } else if (userRole === "media") {
       roleSuffix = " (MEDIA TEAM 📸)";
-    } else if (userRole.toLowerCase() === "site dev") { // or use strict "Site Dev" if you want to be case-sensitive
+    } else if (userRole.toLowerCase() === "site dev") {
       roleSuffix = " (SITE DEV 🛠️)";
     }
-
 
     const postTitle = post.title || "";
     const postDescription = post.description || "";
 
-    postDiv.innerHTML = `
+    postDiv.innerHTML += `
       <div class="poster-info">
         <span class="poster-name">${displayName}${roleSuffix}</span>
       </div>
@@ -75,6 +82,7 @@ async function fetchAndRenderPosts() {
     grid.appendChild(postDiv);
   });
 }
+
 
 
 // ===== Updated: Populate Display Name Select ===== //

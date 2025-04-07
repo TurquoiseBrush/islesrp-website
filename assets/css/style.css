@@ -700,3 +700,17 @@ body.index-page, html.index-page {
 .poster-name::after {
   margin-left: 4px;
 }
+
+.post.pinned {
+  border: 2px solid #FFAA00;  /* A gold/orange border */
+  background-color: #FFF7E6;  /* A light background */
+  position: relative;         /* This could help if you want to position a pin icon */
+}
+
+/* Optional: Style the pin icon inside pinned posts */
+.pin-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 1.2em;
+}
