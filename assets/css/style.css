@@ -701,7 +701,6 @@ body.index-page, html.index-page {
   margin-left: 4px;
 }
 
-<<<<<<< HEAD
 .post.pinned {
   border: 2px solid #FFAA00;  /* A gold/orange border */
   background-color: #FFF7E6;  /* A light background */
@@ -714,7 +713,8 @@ body.index-page, html.index-page {
   top: 8px;
   right: 8px;
   font-size: 1.2em;
-=======
+}
+
 /*------------Current Song---------*/
 .now-playing-box {
   position: fixed;
@@ -745,5 +745,4 @@ body.index-page, html.index-page {
 
 #visualizer {
   background: transparent;
->>>>>>> d0aafbefb14e2997eeab45c15c47d1743c5496ca
 }
