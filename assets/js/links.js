@@ -9,8 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
       link.addEventListener("click", (event) => {
         console.log(`Clicked: ${event.target.innerText} - ${event.target.href}`);
         
-        // Optional: Send this data to a backend for analytics
-        // fetch("/track-click", { method: "POST", body: JSON.stringify({ link: event.target.href }) });
   
         // Visual effect (brief animation on click)
         event.target.classList.add("clicked");

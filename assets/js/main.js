@@ -21,7 +21,7 @@ async function fetchAndRenderPosts() {
 
   grid.innerHTML = "";
 
-  // Include "ispinned" and order so that pinned posts show up at the top
+  // Include ispinned and order so that pinned posts show up at the top
   const { data: posts, error } = await supabase
     .from("posts")
     .select("id, title, description, image_url, created_at, display_name, ispinned, user:users(username, role)")
@@ -41,7 +41,6 @@ async function fetchAndRenderPosts() {
     // Check if this post is pinned
     if (post.ispinned) {
       postDiv.classList.add("pinned");
-      // Optionally, add a pinned icon. You might position it with CSS.
       postDiv.innerHTML += `<span class="pin-icon">📌</span>`;
     }
 
@@ -75,7 +74,7 @@ async function fetchAndRenderPosts() {
 
 
 
-// ===== Updated: Populate Display Name Select ===== //
+// ===== Populate Display Name Select ===== //
 async function populateDisplayNameSelect() {
   const displaySelect = document.getElementById("displayNameSelect");
   if (!displaySelect) {
@@ -108,7 +107,7 @@ async function populateDisplayNameSelect() {
       displaySelect.appendChild(option);
     });
   } else {
-    // If no characters exist, add a default option (non-disabled so it can be selected)
+    // If no characters exist, add a default option
     const option = document.createElement("option");
     option.value = "";
     option.textContent = "No characters found";

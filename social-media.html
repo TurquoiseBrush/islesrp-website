@@ -9,14 +9,13 @@
 </head>
 <body class="social-media-page">
 
-  <!-- Fixed Home Button -->
+  <!-- Home Button -->
   <a href="index.html" class="home-btn">Home</a>
 
-<!-- Example snippet to add in social-media.html -->
   <header class="content">
     <h1>📢 Isles Server Social Media</h1>
     <p>Stay updated with our latest news, community content, and RP moments!</p>
-    <!-- New Profile button -->
+    <!-- Profile button -->
     <a href="profile.html" class="btn" style="margin-top: 10px;">Go to Profile</a>
   </header>
 
@@ -31,7 +30,7 @@
   <!-- Posts Grid -->
   <section class="social-media-content">
     <div class="posts-grid">
-      <!-- Dynamic posts will be loaded here via main.js -->
+      <!-- Dynamic posts will be loaded via main.js -->
     </div>
 
     <!-- Socials Button -->
@@ -71,7 +70,7 @@
         <input type="text" id="postTitle" placeholder="Post Title" required />
         <textarea id="postDescription" placeholder="Post Description" maxlength="200" required></textarea>
         <input type="url" id="postImageUrl" placeholder="Image URL" required />
-        <!-- New dropdown for selecting display name -->
+        <!-- Dropdown for selecting display name -->
         <select id="displayNameSelect" required></select>
         <button type="submit" class="btn">Submit Post</button>
         <p id="submissionStatus"></p>
@@ -80,7 +79,6 @@
     </div>
   </div>
 
-  <!-- Load Modal Logic -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="assets/js/config.js"></script>  
   <script src="assets/js/main.js"></script>

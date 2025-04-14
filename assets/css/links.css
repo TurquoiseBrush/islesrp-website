@@ -34,14 +34,6 @@ body {
     background-size: cover;
   }
   
-  
-  /* 🎨 OPTION 3: Gradient Color Background */
-  /*
-  body {
-    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-  }
-  */
-  
   .profile {
     margin-top: 75px;
   }

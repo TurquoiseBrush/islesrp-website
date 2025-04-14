@@ -19,7 +19,7 @@
       if (event === "SIGNED_IN") {
         console.log("✅ User signed in via redirect.");
 
-        // Optional: store in localStorage to resume previous page
+        // Store in localStorage to resume previous page
         const returnTo = localStorage.getItem("returnTo") || "social-media.html";
 
         // Clear temp redirect storage

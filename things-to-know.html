@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="things-to-know-page">
-  <!-- Fixed Home Button at Top Left -->
   <a href="index.html" class="home-btn">Home</a>
 
   <header class="content">
@@ -31,7 +30,7 @@
       </div>
     </div>
 
-    <!-- Accordion Item 2: Clearing FiveM Cache -->
+    <!-- Accordion Item 2 -->
     <div class="accordion-item">
       <div class="accordion-header">Clearing FiveM Cache</div>
       <div class="accordion-content">
@@ -61,7 +60,7 @@
       </div>
     </div>
 
-    <!-- Add additional accordion items as needed -->
+    <!-- Add additional -->
   </div>
 
   <script>
@@ -70,14 +69,14 @@
         const item = header.parentElement;
         item.classList.toggle('active');
   
-        // Allow page height to update dynamically when opening an accordion
+        // Allows page height to update dynamically when opening an accordion
         if (item.classList.contains('active')) {
           item.querySelector('.accordion-content').style.maxHeight = item.querySelector('.accordion-content').scrollHeight + "px";
         } else {
           item.querySelector('.accordion-content').style.maxHeight = "0px";
         }
   
-        // Ensure the page scrolls past opened content
+        // Ensures the page scrolls past opened content
         setTimeout(() => {
           document.documentElement.style.height = "auto";
           document.body.style.height = "auto";

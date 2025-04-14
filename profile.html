@@ -6,7 +6,7 @@
   <title>Profile - IslesRP</title>
   <link rel="stylesheet" href="assets/css/style.css">
   <style>
-    /* Basic styling for profile page components */
+    /* Styling for profile page components */
     body.profile-page { padding: 20px; font-family: sans-serif; }
     .home-btn { position: fixed; top: 10px; left: 10px; }
     header.profile-header { text-align: center; margin-bottom: 20px; }
@@ -27,7 +27,7 @@
   </style>
 </head>
 <body class="profile-page">
-  <!-- Fixed Home Button -->
+  <!-- Home Button -->
   <a href="index.html" class="home-btn">Home</a>
   <a href="social-media.html" class="home-btn" style="position: fixed; top: 10px; left: 10px;">Back to Social Media</a>
 
@@ -36,7 +36,7 @@
     <h1>Your Profile</h1>
   </header>
 
-  <!-- Profile Info Section -->
+  <!-- Profile Info -->
   <section class="profile-info">
     <div id="userInfoContainer">
       <p id="userName"></p>
@@ -45,11 +45,10 @@
     <button id="logoutBtn" class="btn">Logout</button>
   </section>
 
-  <!-- Characters Management Section -->
+  <!-- Characters Management -->
   <section class="profile-characters">
     <h2>Your Characters</h2>
     <div id="characterList">
-      <!-- User characters will be rendered here -->
     </div>
     <form id="characterForm">
       <input type="text" id="newCharacterName" placeholder="Add a new character" required>
@@ -57,11 +56,10 @@
     </form>
   </section>
 
-  <!-- User's Posts Section -->
+  <!-- User's Posts -->
   <section class="profile-posts">
     <h2>Your Posts</h2>
     <div id="userPosts">
-      <!-- User posts will be rendered here -->
     </div>
   </section>
 
@@ -82,7 +80,7 @@
         return;
       }
       
-      // Display user info (using metadata from Discord)
+      // Display user info
       document.getElementById('userName').textContent = `Username: ${user.user_metadata.full_name || user.user_metadata.name || "Unknown"}`;
       document.getElementById('userDiscord').textContent = `Discord ID: ${user.user_metadata.provider_id || "N/A"}`;
 

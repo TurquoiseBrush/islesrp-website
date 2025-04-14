@@ -20,7 +20,7 @@ body, html {
   overflow: hidden;
 }
 
-/* Style the YouTube iframe to fully cover the viewport */
+/* Style the YouTube iframe */
 .video-background {
   position: absolute;
   top: 50%;
@@ -44,7 +44,7 @@ body, html {
 
 /* Logo styling */
 .server-logo {
-  max-width: 200px; /* Adjust as needed */
+  max-width: 200px;
   height: auto; /* Maintains aspect ratio */
   display: block;
   margin: 0 auto; /* Centers the image */
@@ -112,7 +112,7 @@ body {
   color: #e0e0e0;
 }
 
-/* Fixed Home Button Styling */
+/* Home Button Styling */
 .home-btn {
   position: fixed;
   top: 20px;
@@ -208,7 +208,7 @@ header.content .subtitle {
 
 /* --------------------- Connection Page Specific Styles --------------------- */
 
-/* Use a distinct background for the Connection page */
+/* Background for the Connection page */
 body.connection-page {
   background: linear-gradient(135deg, #232526, #414345);
   color: #e0e0e0;
@@ -290,7 +290,7 @@ body.connection-page {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-/* --------------------- Feedback Page Specific Styles --------------------- */
+/* --------------------- Feedback Page Styles --------------------- */
 
 body.feedback-page {
   background: linear-gradient(135deg, #1f1f1f, #2c2c2c);
@@ -350,7 +350,7 @@ body.feedback-page {
 }
 /* --------------------- Server Description Page Styles --------------------- */
 
-/* Apply a subtle gradient background to the description page */
+/* Apply a gradient background to the description page */
 body.server-description-page {
   background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
   color: #e0e0e0;
@@ -538,7 +538,7 @@ header.content {
   background-color: #a31e68;
 }
 
-/* Completely disable scrolling on index.html */
+/* Disable scrolling on index.html */
 body.index-page, html.index-page {
   overflow: hidden !important;
   height: 100vh;
@@ -648,8 +648,8 @@ body.index-page, html.index-page {
 }
 
 .post-image {
-  width: 100%; /* Adjust this value to set your desired width */
-  max-width: 600px; /* Maximum width to prevent it from getting too large */
+  width: 100%; 
+  max-width: 600px; 
   height: auto; /* Maintain aspect ratio */
 }
 
@@ -702,18 +702,18 @@ body.index-page, html.index-page {
 }
 
 .post.pinned {
-  /* Use a dark-gray background to distinguish pinned posts from the black base */
+  /* Use a dark-gray background */
   background-color: #1e1e1e;  
   /* Add a bold gold border */
   border: 2px solid #FFD700; 
-  /* Add a subtle glowing effect to make it pop */
+  /* Add a subtle glowing effect */
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);  
-  /* Ensure padding/margin adjustments if needed for a balanced look */
+  /* Ensure padding/margin adjustments */
   padding: 10px;
   position: relative;
 }
 
-/* Optional: Style for the pin icon to match the accent */
+/* Style for the pin icon */
 .pin-icon {
   position: absolute;
   top: 8px;
